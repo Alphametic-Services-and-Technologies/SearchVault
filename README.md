@@ -32,30 +32,30 @@
 
 ## 🧩 2. Key Components
 
-### 🖥️ a. Frontend (React)
+### 🖥️ Frontend (React)
 - Chat UI (ChatGPT-style)
 - Admin panel for document upload
 - Language toggle (i18n)
 - Tenant-scoped views
 
-### 🔗 b. API Gateway (.NET)
+### 🔗 API Gateway (.NET)
 - Auth (JWT)
 - Routes chat/doc actions to Python backend
 - Manages tenants and permissions
 - Serves user/session isolation
 
-### 🧠 c. RAG Backend (Python)
+### 🧠 RAG Backend (Python)
 - Chunking & embedding via models like `all-MiniLM-L6-v2`
 - Stores vectors in Qdrant
 - Queries Mistral for answers with retrieved context
 - Future: Hybrid SQL-RAG answering
 
-### 🗂️ d. Qdrant (Vector DB)
+### 🗂️ Qdrant (Vector DB)
 - Tenant-specific vector storage
 - Rich metadata (e.g., title, language)
 - Fast ANN search with filtering
 
-### 🧠 e. Mistral (Local LLM)
+### 🧠 Mistral (Local LLM)
 - Hosted locally via [Ollama](https://ollama.com/)
 - Lightweight and performant
 - Can be wrapped for template-based prompting
