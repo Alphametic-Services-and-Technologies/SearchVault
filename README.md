@@ -4,7 +4,7 @@
 
 > 🎯 Ideal for organizations looking to own their internal AI tools without sacrificing privacy.
 
-<img width="462" alt="SearchVault_Systemdesign" src="https://github.com/user-attachments/assets/da81b3ef-1a95-4e43-8590-102111de7d05" />
+<img width="462" alt="SearchVault_Systemdesign" src="https://github.com/user-attachments/assets/da81b3ef-1a95-4e43-8590-102111de7d05" margin-left="auto" margin-right="auto" />
 
 ---
 
