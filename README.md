@@ -103,3 +103,57 @@ Built with ❤️ by AST for internal AI enablement — made for privacy, contro
 
 # System overview
 <img width="563" alt="SearchVault_Componenets" src="https://github.com/user-attachments/assets/1a79f808-fdb8-4e4b-9562-a64255ebd059" />
+
+---
+
+# 📥 Ingestor (Python, FastAPI) Setup
+
+The Ingestor is a FastAPI-based microservice responsible for:
+- Parsing documents (PDF, DOCX, TXT, etc.)
+- Chunking and embedding content using a local model
+- Storing vector embeddings in Qdrant for RAG-based retrieval
+
+---
+
+## 🔧 Setup Instructions
+
+### 1. If you are running Qdrant in a separate docker container then create Docker Network
+
+```bash
+docker network create searchvault-net
+````
+
+### 2. Pull & Run Qdrant
+
+```bash
+docker pull qdrant/qdrant
+docker run -d \
+  --name qdrant \
+  --network searchvault-net \
+  -p 6333:6333 \
+  qdrant/qdrant
+````
+
+### 3. Install Dependencies (Make sure requirements.txt file is complete)
+
+fastapi
+uvicorn
+PyMuPDF
+python-docx
+pandas
+openpyxl
+qdrant-client
+transformers
+python-multipart
+
+### 4. Run Ingestor
+
+```bash
+docker compose up --build
+````
+
+### 5. Access API Docs
+
+Swagger UI: http://localhost:8000/docs - it may take some time for the app to start, so wait until you see in the logs:
+
+<img width="403" alt="image" src="https://github.com/user-attachments/assets/3bccd1b2-221d-466e-9b5b-486637099846" />
