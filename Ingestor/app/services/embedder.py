@@ -1,5 +1,8 @@
 from transformers import AutoTokenizer, AutoModel
 import torch
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 MODEL_NAME = "BAAI/bge-base-en"
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
@@ -25,6 +28,8 @@ def embed(chunks: list[str]) -> list[dict]:
 
         cls_embedding = outputs.last_hidden_state[:, 0]
         norm_vector = torch.nn.functional.normalize(cls_embedding, p=2, dim=1).squeeze().tolist()
+
+        logging.info(f"embed in embedder: {type(norm_vector)} - {type(norm_vector[0])} - {len(norm_vector)}")
 
         embeddings.append({
             "text": chunk,

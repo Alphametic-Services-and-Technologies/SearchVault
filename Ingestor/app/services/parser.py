@@ -23,7 +23,7 @@ def extract_dpf(content: bytes) -> str:
     text = ""
     with fitz.open(stream=content, filetype="pdf") as doc:
         for page in doc:
-            text += page.getText()
+            text += page.get_text()
     return text
 
 def extract_docx(content: bytes) -> str:

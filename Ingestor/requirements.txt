@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+PyMuPDF
+python-docx
+pandas
+openpyxl
+qdrant-client
+transformers
+python-multipart
