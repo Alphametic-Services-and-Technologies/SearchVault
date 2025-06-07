@@ -113,8 +113,6 @@ The Ingestor is a FastAPI-based microservice responsible for:
 - Chunking and embedding content using a local model
 - Storing vector embeddings in Qdrant for RAG-based retrieval
 
----
-
 ## 🔧 Setup Instructions
 
 ### 1. If you are running Qdrant in a separate docker container then create Docker Network
@@ -157,3 +155,9 @@ docker compose up --build
 Swagger UI: http://localhost:8000/docs - it may take some time for the app to start, so wait until you see in the logs:
 
 <img width="403" alt="image" src="https://github.com/user-attachments/assets/3bccd1b2-221d-466e-9b5b-486637099846" />
+
+### 6. Test in Postman
+
+<img width="1309" alt="image" src="https://github.com/user-attachments/assets/26fae912-20da-4b75-bf12-751a89e53295" />
+
+---
