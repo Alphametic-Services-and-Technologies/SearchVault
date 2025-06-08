@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36202.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Middleware.API", "Middleware\Middleware.API.csproj", "{E163EE5D-D9E0-405D-AA3D-32767FB4DEFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Middleware.API", "Middleware.API\Middleware.API.csproj", "{E163EE5D-D9E0-405D-AA3D-32767FB4DEFD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Middleware.Data", "Middleware.Data\Middleware.Data.csproj", "{9DE4B5C4-2426-4849-B00D-888BD0F35247}"
 EndProject
