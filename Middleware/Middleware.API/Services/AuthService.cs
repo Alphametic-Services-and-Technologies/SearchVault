@@ -70,6 +70,7 @@ namespace Middleware.API.Services
                 issuer: _tokenConfiguration.Issuer,
                 audience: _tokenConfiguration.Audience,
                 claims: claims,
+                expires: DateTime.UtcNow.AddHours(8),
                 signingCredentials: creds
             );
 

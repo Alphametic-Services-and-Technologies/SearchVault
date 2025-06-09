@@ -51,7 +51,8 @@ namespace Middleware.API.Services
             var content = new MultipartFormDataContent
             {
                 { new StreamContent(request.File.OpenReadStream()), "file", request.File.FileName },
-                { new StringContent(tenantId.ToString()), "tenant_id" }
+                { new StringContent(tenantId.ToString()), "tenant_id" },
+                { new StringContent(Path.GetFileNameWithoutExtension(request.File.FileName)), "doc_title" }
             };
 
             var response = await client.PostAsync("http://localhost:8000/ingest", content);

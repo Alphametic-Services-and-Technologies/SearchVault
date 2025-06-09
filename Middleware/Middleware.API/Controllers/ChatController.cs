@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Middleware.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class ChatController : ControllerBase
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -29,12 +31,12 @@ namespace Middleware.API.Controllers
 
             await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
             using var reader = new StreamReader(stream);
-            while(!reader.EndOfStream)
+            while (!reader.EndOfStream)
             {
                 var line = await reader.ReadLineAsync(cancellationToken);
                 if (!string.IsNullOrWhiteSpace(line))
                 {
-                    await Response.WriteAsync($"data: {line}\n\n", cancellationToken);
+                    await Response.WriteAsync($"{line}\n\n", cancellationToken);
                     await Response.Body.FlushAsync(cancellationToken);
                 }
             }

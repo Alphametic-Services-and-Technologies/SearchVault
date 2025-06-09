@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Middleware.API.Services.Interfaces;
 using System.Security.Claims;
 
@@ -6,6 +7,7 @@ namespace Middleware.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class DocsController : ControllerBase
     {
         private readonly IDocsService _docsService;

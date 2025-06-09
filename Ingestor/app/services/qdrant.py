@@ -1,8 +1,9 @@
 from qdrant_client import QdrantClient
-from qdrant_client.models import PointStruct, VectorParams, Distance
+from qdrant_client.models import PointStruct, VectorParams, Distance, Filter, FieldCondition, MatchValue, SearchRequest
 import uuid
 import os
 import logging
+import json
 
 logging.basicConfig(level=logging.INFO)
 
@@ -39,3 +40,23 @@ def upsert(vectors: list[dict], tenant_id: str, doc_title: str):
         points.append(point)
 
     client.upsert(collection_name=collection, points=points)
+
+def search_similar_chunks(tenant: str, query_vector: list[float], top_k: int = 4):
+    collection_name = f"tenant_{tenant}"
+
+    search_result = client.query_points(
+        collection_name=collection_name,
+        query=query_vector,
+        limit=top_k,
+        with_payload=True,
+        query_filter=Filter(
+            must=[
+                FieldCondition(
+                    key="tenant_id",
+                    match=MatchValue(value=tenant)
+                )
+            ]
+        )
+    )
+
+    return search_result
