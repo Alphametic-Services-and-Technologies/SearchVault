@@ -90,6 +90,7 @@ namespace Middleware.API.DI
             //Scoped
             services.AddScoped<IMigrationService, MigrationService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IDocsService, DocsService>();
         }
     }
 }

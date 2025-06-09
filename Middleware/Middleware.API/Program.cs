@@ -9,6 +9,7 @@ using System.Text.Json.Serialization;
 const string CORS_POLICY_NAME = "CorsPolicy";
 
 var builder = WebApplication.CreateBuilder(args);
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // Add services to the container.
 
@@ -27,6 +28,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwagger();
 builder.Services.AddCors(CORS_POLICY_NAME);
 builder.Services.AddResponseCompression();
+builder.Services.AddHttpClient();
 builder.Services.AddServices();
 
 var app = builder.Build();

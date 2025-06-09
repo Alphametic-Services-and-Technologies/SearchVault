@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Middleware.Data.DataSeed;
 using Middleware.Data.Entities;
 using Middleware.Data.Entities.Infrastructure;
 using System.ComponentModel.DataAnnotations;
@@ -27,6 +28,8 @@ namespace Middleware.Data
             modelBuilder.Entity<Tenant>().Property(b => b.RawVersion).IsRowVersion();
 
             modelBuilder.Entity<ChatLog>().Property(b => b.RawVersion).IsRowVersion();
+
+            modelBuilder.SeedData();
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

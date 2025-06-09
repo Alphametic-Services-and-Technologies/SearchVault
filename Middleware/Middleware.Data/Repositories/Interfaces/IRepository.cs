@@ -11,5 +11,6 @@ namespace Middleware.Data.Repositories.Interfaces
         Task<T?> GetByFilter(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken);
         Task<T?> Find(Guid id, CancellationToken cancellationToken);
         Task<bool> Any(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken);
+        Task<IList<T>> GetMany(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken);
     }
 }

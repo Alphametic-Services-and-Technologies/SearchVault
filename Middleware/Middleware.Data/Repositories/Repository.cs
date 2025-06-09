@@ -45,5 +45,10 @@ namespace Middleware.Data.Repositories
         {
             return await _entities.AnyAsync(predicate, cancellationToken);
         }
+
+        public async Task<IList<T>> GetMany(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)
+        {
+            return await _entities.Where(predicate).ToListAsync(cancellationToken);
+        }
     }
 }
