@@ -2,7 +2,7 @@
 
 namespace Middleware.Data.Entities
 {
-    internal class Tenant : BaseEntity
+    public class Tenant : BaseEntity
     {
         public Tenant()
         {

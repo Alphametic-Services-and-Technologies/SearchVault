@@ -2,7 +2,7 @@
 
 namespace Middleware.Data.Entities
 {
-    internal class User : BaseEntity
+    public class User : BaseEntity
     {
         public Guid TenantID { get; set; }
         public Tenant Tenant { get; set; } = default!;

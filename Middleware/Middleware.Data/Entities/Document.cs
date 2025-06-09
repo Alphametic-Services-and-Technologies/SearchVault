@@ -2,7 +2,7 @@
 
 namespace Middleware.Data.Entities
 {
-    internal class Document : BaseEntity
+    public class Document : BaseEntity
     {
         public Guid TenantID { get; set; }
         public Tenant Tenant { get; set; } = default!;

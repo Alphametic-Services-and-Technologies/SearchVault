@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Middleware.Data.Entities.Infrastructure
 {
-    internal abstract class BaseEntity : IAuditable
+    public abstract class BaseEntity : IAuditable
     {
         [Key]
         public Guid ID { get; set; }

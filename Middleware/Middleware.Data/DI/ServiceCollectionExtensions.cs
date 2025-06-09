@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Middleware.Data.Configuration;
+using Middleware.Data.Repositories;
+using Middleware.Data.Repositories.Interfaces;
 using System.Reflection;
 
 namespace Middleware.Data.DI
@@ -22,6 +24,8 @@ namespace Middleware.Data.DI
                             errorCodesToAdd: null);
             }));
 
+            services.AddScoped<IMigrationRepository, MigrationRepository>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             return services;
         }
 
@@ -31,8 +35,8 @@ namespace Middleware.Data.DI
             var port = configurationSection["port"];
             var username = configurationSection["username"];
             var password = configurationSection["password"];
-            var constructionMachinesDbName = configurationSection["ConstructionMachinesDbName"];
-            return new DbConfiguration(host, port, username, password, constructionMachinesDbName);
+            var middlewareDbName = configurationSection["MiddlewareDbName"];
+            return new DbConfiguration(host, port, username, password, middlewareDbName);
         }
     }
 }
