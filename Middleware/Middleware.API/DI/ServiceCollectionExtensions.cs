@@ -92,5 +92,10 @@ namespace Middleware.API.DI
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IDocsService, DocsService>();
         }
+
+        public static void SetupConfigurations(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<IngestorConfiguration>(configuration.GetSection(nameof(IngestorConfiguration)));
+        }
     }
 }

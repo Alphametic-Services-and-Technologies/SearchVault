@@ -1,0 +1,30 @@
+services:
+  middleware:
+    build: .
+    ports:
+      - "8080:8080"
+    container_name: searchvault-middleware
+    depends_on:
+      - "db"
+    networks:
+      - searchvault-net
+    
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    ports:
+      - 6400:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - searchvault-net
+
+volumes:
+  postgres_data:
+
+networks:
+  searchvault-net:
+    external: true

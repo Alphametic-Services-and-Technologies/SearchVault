@@ -69,15 +69,17 @@ async def chat(request: ChatRequest):
             async with client.stream("POST", OLLAMA_URL, json=payload) as response:
                 async for line in response.aiter_lines():
                     if not line.strip():
-                        continue  # Skip empty lines
-
+                        continue
                     try:
-                        data = json.loads(line)
+                        data = json.loads(line.removeprefix("data:").strip())
                         content = data.get("message", {}).get("content", "")
                         if content:
-                            yield f"{content}"
+                            # Stream back data with SSE formatting
+                            yield f"data: {content}\n\n"
                     except json.JSONDecodeError as e:
                         logging.warning(f"JSON decode error: {e} — line was: {line}")
                         continue
+
+    logging.info("Returning streamed data")
 
     return StreamingResponse(mistral_stream(), media_type="text/event-stream")

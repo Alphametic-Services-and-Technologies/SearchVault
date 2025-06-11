@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Middleware.API.Configurations;
 
 namespace Middleware.API.Controllers
 {
@@ -9,10 +11,14 @@ namespace Middleware.API.Controllers
     public class ChatController : ControllerBase
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IngestorConfiguration _ingestorConfiguration;
 
-        public ChatController(IHttpClientFactory httpClientFactory)
+        public ChatController(
+            IHttpClientFactory httpClientFactory,
+            IOptions<IngestorConfiguration> ingestorConfiguration)
         {
             _httpClientFactory = httpClientFactory;
+            _ingestorConfiguration = ingestorConfiguration.Value;
         }
 
         [HttpPost]
@@ -20,7 +26,7 @@ namespace Middleware.API.Controllers
         {
             using var client = _httpClientFactory.CreateClient();
             var reqBody = JsonContent.Create(request);
-            var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Post, "http://localhost:8000/chat")
+            var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Post, $"http://{_ingestorConfiguration.URL}:{_ingestorConfiguration.Port}/chat")
             {
                 Content = reqBody
             }, HttpCompletionOption.ResponseHeadersRead, cancellationToken);

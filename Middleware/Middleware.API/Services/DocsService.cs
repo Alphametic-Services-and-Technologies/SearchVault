@@ -1,4 +1,6 @@
-﻿using Middleware.API.DTOs;
+﻿using Microsoft.Extensions.Options;
+using Middleware.API.Configurations;
+using Middleware.API.DTOs;
 using Middleware.API.Services.Interfaces;
 using Middleware.Data.Entities;
 using Middleware.Data.Repositories.Interfaces;
@@ -8,11 +10,13 @@ namespace Middleware.API.Services
     internal class DocsService(
         IRepository<Document> documentRepository,
         IRepository<User> userRepository,
-        IHttpClientFactory httpClientFactory) : IDocsService
+        IHttpClientFactory httpClientFactory,
+        IOptions<IngestorConfiguration> ingestorConfiguration) : IDocsService
     {
         private readonly IRepository<Document> _documentRepository = documentRepository;
         private readonly IRepository<User> _userRepository = userRepository;
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+        private readonly IngestorConfiguration _ingestorConfiguration = ingestorConfiguration.Value;
 
         public async Task<List<DocumentDto>> GetDocumentsForTenantAsync(Guid tenantId, CancellationToken cancellationToken)
         {
@@ -55,7 +59,7 @@ namespace Middleware.API.Services
                 { new StringContent(Path.GetFileNameWithoutExtension(request.File.FileName)), "doc_title" }
             };
 
-            var response = await client.PostAsync("http://localhost:8000/ingest", content);
+            var response = await client.PostAsync($"http://{_ingestorConfiguration.URL}:{_ingestorConfiguration.Port}/ingest", content);
             response.EnsureSuccessStatusCode();
         }
     }

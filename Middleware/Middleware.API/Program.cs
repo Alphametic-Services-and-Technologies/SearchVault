@@ -21,6 +21,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.AddControllers();
+builder.Services.SetupConfigurations(builder.Configuration);
 builder.Services.AddCustomAuthentication(GetTokenConfiguration());
 var postgresqlSection = builder.Configuration.GetSection("PostgreSQL");
 builder.Services.InjectMiddlewareData(postgresqlSection);
