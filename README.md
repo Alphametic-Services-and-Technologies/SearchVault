@@ -134,15 +134,7 @@ docker run -d \
 
 ### 3. Install Dependencies (Make sure requirements.txt file is complete)
 
-fastapi
-uvicorn
-PyMuPDF
-python-docx
-pandas
-openpyxl
-qdrant-client
-transformers
-python-multipart
+pip install -r requirements.txt
 
 ### 4. Run Ingestor
 
