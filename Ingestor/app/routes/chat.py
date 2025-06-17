@@ -59,12 +59,13 @@ async def chat(request: ChatRequest):
 
     logging.info("# Step 4: Build prompt - done")
 
-    async def mistral_stream():
+    async def stream():
         payload = {
-            "model": "mistral",
+            "model": "phi",
             "stream": True,
             "messages": prompt
         }
+        buffer = ""
         async with httpx.AsyncClient(timeout=None) as client:
             async with client.stream("POST", OLLAMA_URL, json=payload) as response:
                 async for line in response.aiter_lines():
@@ -74,12 +75,18 @@ async def chat(request: ChatRequest):
                         data = json.loads(line.removeprefix("data:").strip())
                         content = data.get("message", {}).get("content", "")
                         if content:
+                            buffer += content
                             # Stream back data with SSE formatting
-                            yield f"data: {content}\n\n"
+                            if any(buffer.endswith(c) for c in [" ", ".", ",", "!", "?"]):
+                                yield f"data: {buffer.strip()}\n\n"
+                                buffer = ""  # Reset buffer
                     except json.JSONDecodeError as e:
                         logging.warning(f"JSON decode error: {e} — line was: {line}")
                         continue
+        # Send leftover buffer at end
+        if buffer.strip():
+            yield f"data: {buffer.strip()}\n\n"
 
     logging.info("Returning streamed data")
 
-    return StreamingResponse(mistral_stream(), media_type="text/event-stream")
+    return StreamingResponse(stream(), media_type="text/event-stream")
