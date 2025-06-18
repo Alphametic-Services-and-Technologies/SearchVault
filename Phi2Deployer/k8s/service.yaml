@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: phi2
+  namespace: staging
+spec:
+  selector:
+    app: phi2-ollama
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 11434
+  type: ClusterIP

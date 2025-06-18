@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ollama-preload-phi2
+  namespace: staging
+spec:
+  template:
+    spec:
+      containers:
+        - name: preload
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for Ollama to be ready..."
+              until curl -s http://phi2:80/api/status; do sleep 2; done
+              echo "Pulling Phi model..."
+              curl -X POST http://phi2:80/api/pull -d '{"name": "phi"}'
+      restartPolicy: OnFailure
