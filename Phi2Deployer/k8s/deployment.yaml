@@ -19,6 +19,9 @@ spec:
           args: ["serve"]
           ports:
             - containerPort: 11434
+          env:
+            - name: OLLAMA_CONTEXT_LENGTH
+              value: "2048"
           resources:
             requests:
               cpu: "1"
