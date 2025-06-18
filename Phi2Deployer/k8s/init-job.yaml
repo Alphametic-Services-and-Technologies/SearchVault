@@ -4,6 +4,7 @@ metadata:
   name: ollama-preload-phi2
   namespace: staging
 spec:
+  ttlSecondsAfterFinished: 60
   template:
     spec:
       containers:
