@@ -28,6 +28,7 @@ jobs:
           namespace: staging
           skip-tls-verify: true
           manifests: |
+            Phi2Deployer/k8s/pvc.yaml
             Phi2Deployer/k8s/deployment.yaml
             Phi2Deployer/k8s/service.yaml
             Phi2Deployer/k8s/init-job.yaml

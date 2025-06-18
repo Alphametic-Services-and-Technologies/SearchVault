@@ -34,4 +34,5 @@ spec:
               mountPath: /root/.ollama
       volumes:
         - name: ollama-data
-          emptyDir: {}  # Replace with a PVC if needed
+          persistentVolumeClaim:
+            claimName: ollama-pvc
