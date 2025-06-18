@@ -1,0 +1,33 @@
+name: Deploy Qdrant to K8s
+
+on:
+  push:
+    paths:
+      - 'Qdrant/**'  #Only trigger when files here change
+    branches:
+      - main
+
+jobs:
+  deploy-to-k8s:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+    
+      - name: Set the Kubernetes context
+        uses: azure/k8s-set-context@v3
+        with:
+          method: service-account
+          k8s-url: https://rancher.cattle-system.65.109.81.99.srv0.alsayegh.tech
+          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
+
+      - name: Deploy to the k8s cluster
+        uses: azure/k8s-deploy@v4.9
+        with:
+          namespace: staging
+          skip-tls-verify: true
+          manifests: |
+            Qdrant/k8s/pvc.yaml
+            Qdrant/k8s/deployment.yaml
+            Qdrant/k8s/service.yaml
