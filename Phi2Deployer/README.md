@@ -6,5 +6,5 @@ This repository deploys the [Phi-2](https://huggingface.co/microsoft/phi-2) lang
 
 - CPU-only model inference
 - Internal-only access (via ClusterIP)
-- Model preloading on startup (via Job)
+- Model preloading on startup (via Init Job)
 - GitHub Actions CI/CD deployment
