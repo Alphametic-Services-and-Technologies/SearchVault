@@ -65,16 +65,16 @@ spec:
             configMapKeyRef:
               name: cfg-middleware-configs
               key: IngestorConfiguration__Port
-        - name: PostgreSQL_username
+        - name: PostgreSQL__username
           valueFrom:
             secretKeyRef:
               name: cfg-middleware-secrets
-              key: PostgreSQL_username
-        - name: PostgreSQL_password
+              key: PostgreSQL__username
+        - name: PostgreSQL__password
           valueFrom:
             secretKeyRef:
               name: cfg-middleware-secrets
-              key: PostgreSQL_password
+              key: PostgreSQL__password
         - name: JWT__Secret
           valueFrom:
             secretKeyRef:
