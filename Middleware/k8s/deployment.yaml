@@ -90,13 +90,6 @@ spec:
             secretKeyRef:
               name: cfg-middleware-secrets
               key: JWT__Audience
-        resources:
-          requests:
-            cpu: "250m"
-            memory: "512Mi"
-          limits:
-            cpu: "1"
-            memory: "1Gi"
       imagePullSecrets:
       - name: dockerconfigjson-github-com
                  
