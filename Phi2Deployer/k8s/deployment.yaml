@@ -16,7 +16,7 @@ spec:
       containers:
         - name: ollama
           image: ollama/ollama:latest
-          args: ["run", "phi:2.7b"]
+          args: ["serve"]
           ports:
             - containerPort: 11434
           env:
