@@ -52,7 +52,6 @@ jobs:
           namespace: staging
           skip-tls-verify: true
           manifests: |
-            Middleware/k8s/configs.yaml
             Middleware/k8s/deployment.yaml
             Middleware/k8s/service.yaml
             Middleware/k8s/ingress.yaml
