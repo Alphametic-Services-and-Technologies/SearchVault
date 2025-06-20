@@ -1,0 +1,58 @@
+name: Deploy Ingestor to K8s
+
+env:
+  IMAGE_NAME: ghcr.io/alphametic-services-and-technologies/searchvault-ingestor
+on:
+  push:
+    paths:
+      - 'Ingestor/**'  #Only trigger when files here change
+    branches:
+      - main
+
+jobs:
+  push-api-image:
+    runs-on: ubuntu-latest
+    steps:    
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: 'Build and push Docker image'
+        env:
+          GHCR: ghcr.io
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build --no-cache -t ${{env.IMAGE_NAME}}:latest -t ${{env.IMAGE_NAME}}:${{ github.sha }} .
+          docker push ${{env.IMAGE_NAME}}:latest
+          docker push ${{env.IMAGE_NAME}}:${{ github.sha }}
+  deploy-to-k8s:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+    
+      - name: Set the Kubernetes context
+        uses: azure/k8s-set-context@v3
+        with:
+          method: service-account
+          k8s-url: https://rancher.cattle-system.65.109.81.99.srv0.alsayegh.tech
+          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
+
+      - name: Deploy to the k8s cluster
+        uses: azure/k8s-deploy@v4.9
+        with:
+          namespace: staging
+          skip-tls-verify: true
+          manifests: |
+            Ingestor/k8s/configs.yaml
+            Ingestor/k8s/deployment.yaml
+            Ingestor/k8s/service.yaml
+          images: |
+                ${{env.IMAGE_NAME}}:${{ github.sha }}

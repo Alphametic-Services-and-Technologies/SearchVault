@@ -6,6 +6,7 @@ from services.qdrant import search_similar_chunks
 import logging
 from pydantic import BaseModel
 import json
+import os
 
 class ChatRequest(BaseModel):
     question: str
@@ -15,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 
 router = APIRouter()
 
-OLLAMA_URL = "http://host.docker.internal:11434/api/chat"  # use host.docker.internal in Docker
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/chat")
 
 @router.post("/chat")
 

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ingestor-env
+  namespace: staging
+data:
+  OLLAMA_URL: "http://phi2.staging.svc.cluster.local:80/api/chat"
+  QDRANT_HOST: "qdrant.staging.svc.cluster.local"
+  QDRANT_PORT: "6333"
