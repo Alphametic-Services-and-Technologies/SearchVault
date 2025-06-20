@@ -8,6 +8,7 @@ on:
       - 'Ingestor/**'  #Only trigger when files here change
     branches:
       - main
+    workflow_dispatch:
 
 jobs:
   push-api-image:
@@ -28,12 +29,12 @@ jobs:
           GHCR: ghcr.io
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build --no-cache -t ${{env.IMAGE_NAME}}:latest -t ${{env.IMAGE_NAME}}:${{ github.sha }} .
+          docker build --no-cache -t ${{env.IMAGE_NAME}}:latest -t ${{env.IMAGE_NAME}}:${{ github.sha }} -f Ingestor/Dockerfile Ingestor/
           docker push ${{env.IMAGE_NAME}}:latest
           docker push ${{env.IMAGE_NAME}}:${{ github.sha }}
   deploy-to-k8s:
+    needs: push-api-image
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
