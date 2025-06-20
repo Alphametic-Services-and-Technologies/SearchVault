@@ -20,6 +20,7 @@ spec:
       containers:
         - name: searchvault-ingestor
           image: ghcr.io/alphametic-services-and-technologies/searchvault-ingestor:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8000
           envFrom:
