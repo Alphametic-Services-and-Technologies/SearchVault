@@ -62,7 +62,7 @@ async def chat(request: ChatRequest):
 
     async def stream():
         payload = {
-            "model": "phi",
+            "model": "phi:2.7b",
             "stream": True,
             "messages": prompt
         }

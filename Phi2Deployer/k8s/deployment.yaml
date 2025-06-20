@@ -16,7 +16,7 @@ spec:
       containers:
         - name: ollama
           image: ollama/ollama:latest
-          args: ["serve"]
+          args: ["run", "phi:2.7b"]
           ports:
             - containerPort: 11434
           env:
@@ -26,6 +26,10 @@ spec:
               value: "10m"
             - name: OLLAMA_MAX_LOADED_MODELS
               value: "1"
+            - name: OLLAMA_THREADS
+              value: "4"
+            - name: OLLAMA_NUM_PARALLEL
+              value: "2"
           volumeMounts:
             - name: ollama-data
               mountPath: /root/.ollama

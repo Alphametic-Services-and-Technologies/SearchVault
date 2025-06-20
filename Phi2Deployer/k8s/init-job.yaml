@@ -20,5 +20,5 @@ spec:
             - |
               echo "Waiting for Ollama to be ready..."
               until curl -s http://phi2:80/api/status; do sleep 2; done
-              echo "Pulling Phi model..."
-              curl -X POST http://phi2:80/api/pull -d '{"name": "phi"}'
+              echo "Pulling Phi 2.7B model..."
+              curl -X POST http://phi2:80/api/pull -H "Content-Type: application/json" -d '{"name": "phi:2.7b"}'
