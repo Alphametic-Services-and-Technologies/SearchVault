@@ -26,7 +26,8 @@ namespace Middleware.API.Controllers
         {
             using var client = _httpClientFactory.CreateClient();
             var reqBody = JsonContent.Create(request);
-            var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Post, $"http://{_ingestorConfiguration.URL}:{_ingestorConfiguration.Port}/chat")
+            var url = _ingestorConfiguration.Port > 0 ? $"http://{_ingestorConfiguration.URL}:{_ingestorConfiguration.Port}/chat" : $"http://{_ingestorConfiguration.URL}/chat";
+            var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Post, url)
             {
                 Content = reqBody
             }, HttpCompletionOption.ResponseHeadersRead, cancellationToken);

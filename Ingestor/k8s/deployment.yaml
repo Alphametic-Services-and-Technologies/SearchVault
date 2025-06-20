@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ingestor
+  name: searchvault-ingestor
   labels:
-    app: ingestor
+    app: searchvault-ingestor
   namespace: staging
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ingestor
+      app: searchvault-ingestor
   template:
     metadata:
       labels:
-        app: ingestor
+        app: searchvault-ingestor
     spec:
       imagePullSecrets:
         - name: dockerconfigjson-github-com
       containers:
-        - name: ingestor
+        - name: searchvault-ingestor
           image: ghcr.io/alphametic-services-and-technologies/searchvault-ingestor:latest
           ports:
             - containerPort: 8000

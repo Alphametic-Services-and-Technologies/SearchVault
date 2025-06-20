@@ -59,7 +59,8 @@ namespace Middleware.API.Services
                 { new StringContent(Path.GetFileNameWithoutExtension(request.File.FileName)), "doc_title" }
             };
 
-            var response = await client.PostAsync($"http://{_ingestorConfiguration.URL}:{_ingestorConfiguration.Port}/ingest", content);
+            var url = _ingestorConfiguration.Port > 0 ? $"http://{_ingestorConfiguration.URL}:{_ingestorConfiguration.Port}/ingest" : $"http://{_ingestorConfiguration.URL}/ingest";
+            var response = await client.PostAsync(url, content, cancellationToken);
             response.EnsureSuccessStatusCode();
         }
     }

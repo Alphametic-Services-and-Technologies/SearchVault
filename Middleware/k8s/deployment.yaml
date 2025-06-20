@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: staging
+  creationTimestamp: null
+  labels:
+    app: searchvault-middleware
+  name: searchvault-middleware
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: searchvault-middleware
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: searchvault-middleware
+    spec:
+      containers:
+      - image: ghcr.io/alphametic-services-and-technologies/searchvault-middleware:latest
+        imagePullPolicy: Always
+        name: searchvault-middleware
+        ports:
+        - containerPort: 80
+        env:
+        - name: Logging__LogLevel__Default
+          valueFrom:
+            configMapKeyRef:
+              name: cfg-middleware-configs
+              key: Logging__LogLevel__Default
+        - name: Logging__LogLevel__Microsoft.AspNetCore
+          valueFrom:
+            configMapKeyRef:
+              name: cfg-middleware-configs
+              key: Logging__LogLevel__Microsoft.AspNetCore
+        - name: AllowedHosts
+          valueFrom:
+            configMapKeyRef:
+              name: cfg-middleware-configs
+              key: AllowedHosts
+        - name: PostgreSQL__host
+          valueFrom:
+            configMapKeyRef:
+              name: cfg-middleware-configs
+              key: PostgreSQL__host
+        - name: PostgreSQL__port
+          valueFrom:
+            configMapKeyRef:
+              name: cfg-middleware-configs
+              key: PostgreSQL__port
+        - name: PostgreSQL__MiddlewareDbName
+          valueFrom:
+            configMapKeyRef:
+              name: cfg-middleware-configs
+              key: PostgreSQL__MiddlewareDbName
+        - name: IngestorConfiguration__URL
+          valueFrom:
+            configMapKeyRef:
+              name: cfg-middleware-configs
+              key: IngestorConfiguration__URL
+        - name: IngestorConfiguration__Port
+          valueFrom:
+            configMapKeyRef:
+              name: cfg-middleware-configs
+              key: IngestorConfiguration__Port
+        - name: PostgreSQL_username
+          valueFrom:
+            secretKeyRef:
+              name: cfg-middleware-secrets
+              key: PostgreSQL_username
+        - name: PostgreSQL_password
+          valueFrom:
+            secretKeyRef:
+              name: cfg-middleware-secrets
+              key: PostgreSQL_password
+        - name: JWT__Secret
+          valueFrom:
+            secretKeyRef:
+              name: cfg-middleware-secrets
+              key: JWT__Secret
+        - name: JWT__Issuer
+          valueFrom:
+            secretKeyRef:
+              name: cfg-middleware-secrets
+              key: JWT__Issuer
+        - name: JWT__Audience
+          valueFrom:
+            secretKeyRef:
+              name: cfg-middleware-secrets
+              key: JWT__Audience
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+      imagePullSecrets:
+      - name: dockerconfigjson-github-com
+                 

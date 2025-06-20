@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ingestor
+  name: searchvault-ingestor
   namespace: staging
 spec:
   selector:
-    app: ingestor
+    app: searchvault-ingestor
   ports:
     - protocol: TCP
       port: 80
