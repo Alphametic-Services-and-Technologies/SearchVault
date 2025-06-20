@@ -6,6 +6,7 @@ on:
   push:
     paths:
       - 'Ingestor/**'  #Only trigger when files here change
+      - '.github/workflows/ingestor_ci.yaml'
     branches:
       - main
     workflow_dispatch:
