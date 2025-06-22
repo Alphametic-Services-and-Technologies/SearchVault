@@ -17,6 +17,8 @@ logging.basicConfig(level=logging.INFO)
 router = APIRouter()
 
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/chat")
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "local")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 @router.post("/chat")
 
@@ -60,7 +62,13 @@ async def chat(request: ChatRequest):
 
     logging.info("# Step 4: Build prompt - done")
 
-    async def stream():
+    async def stream_chat():
+        if LLM_PROVIDER == "openai":
+            return StreamingResponse(stream_openai(), media_type="text/event-stream")
+        else:
+            return StreamingResponse(stream_local_llm(), media_type="text/event-stream")
+
+    async def stream_local_llm():
         payload = {
             "model": "phi",
             "stream": True,
@@ -88,6 +96,34 @@ async def chat(request: ChatRequest):
         if buffer.strip():
             yield f"data: {buffer.strip()}\n\n"
 
-    logging.info("Returning streamed data")
+    async def stream_openai():
+        headers = {
+            "Authorization": f"Bearer {OPENAI_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": "gpt-3.5-turbo",
+            "stream": True,
+            "messages": prompt
+        }
 
-    return StreamingResponse(stream(), media_type="text/event-stream")
+        async with httpx.AsyncClient(timeout=None) as client:
+            async with client.stream("POST", "https://api.openai.com/v1/chat/completions", json=payload,
+                                     headers=headers) as response:
+                buffer = ""
+                async for line in response.aiter_lines():
+                    if line.startswith("data: "):
+                        line = line.removeprefix("data: ").strip()
+                        if line == "[DONE]":
+                            break
+                        try:
+                            data = json.loads(line)
+                            delta = data["choices"][0]["delta"].get("content", "")
+                            buffer += delta
+                            if any(buffer.endswith(c) for c in [" ", ".", ",", "!", "?"]):
+                                yield f"data: {buffer.strip()}\n\n"
+                                buffer = ""
+                        except Exception as e:
+                            logging.warning(f"OpenAI stream decode error: {e}")
+                if buffer.strip():
+                    yield f"data: {buffer.strip()}\n\n"
