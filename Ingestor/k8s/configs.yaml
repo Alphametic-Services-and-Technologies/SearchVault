@@ -7,3 +7,5 @@ data:
   OLLAMA_URL: "http://phi2.staging.svc.cluster.local:80/api/chat"
   QDRANT_HOST: "qdrant.staging.svc.cluster.local"
   QDRANT_PORT: "6333"
+  LLM_PROVIDER: "openai"
+  OPENAI_API_KEY: "OPEN_API_KEY"
