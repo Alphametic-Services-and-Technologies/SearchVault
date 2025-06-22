@@ -1,8 +1,8 @@
-# 🚀 SearchVault
+## SearchVault
 
-**SearchVault** is a modular, multi-tenant AI system that empowers companies with a secure, private, and chat-based interface to search internal documents and knowledge — powered by **local LLMs**, **vector embeddings**, and **RAG (Retrieval-Augmented Generation)**.
+SearchVault is a fully containerized, modular, and multi-tenant Retrieval-Augmented Generation (RAG) system designed to empower organizations with a secure, private, and on-premise AI assistant. It enables users to query internal documentation through a chat-based interface using either local Large Language Models (LLMs) or OpenAI APIs.
 
-> 🎯 Ideal for organizations looking to own their internal AI tools without sacrificing privacy.
+> ✅ Suitable for deployment on **self-managed Kubernetes clusters**.
 
 <img width="462" alt="SearchVault_Systemdesign" src="https://github.com/user-attachments/assets/da81b3ef-1a95-4e43-8590-102111de7d05" />
 
@@ -11,55 +11,63 @@
 ## 🔧 Tech Stack
 
 ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
-![Mistral](https://img.shields.io/badge/Mistral-000000?logo=data:image/svg+xml;base64,...&labelColor=black&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 ![.NET](https://img.shields.io/badge/.NET-512BD4?logo=dotnet&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
-![Qdrant](https://img.shields.io/badge/Qdrant-6F4E7C?logo=data:image/svg+xml;base64,...&logoColor=white)
+![Qdrant](https://img.shields.io/badge/Qdrant-6F4E7C?logo=qdrant&logoColor=white)
 ![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)
+![Mistral](https://img.shields.io/badge/Mistral-black?logo=openai&logoColor=white&labelColor=black)
+![Phi-2](https://img.shields.io/badge/Phi--2-lightgrey?logo=openai&logoColor=white)
+![OpenAI](https://img.shields.io/badge/OpenAI-412991?logo=openai&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?logo=kubernetes&logoColor=white)
 
 ---
 
-## 🔍 1. Overview: Core Features
+## System Overview
 
-- ✅ **Local LLM** (Mistral via Ollama)
-- ✅ **Admin Panel** to upload & manage documents (PDFs, docs)
-- ✅ **ChatGPT-like Interface** for internal Q&A
-- ✅ **Multilingual**
-- ✅ **Multi-tenant support**
-- ✅ **Secure and private** (runs fully on-premise)
+SearchVault is built around these core capabilities:
+
+- 🔐 Secure document ingestion and vectorization.
+- ⚡ Fast semantic search via Qdrant.
+- 🔁 Flexible LLM interaction (local via Ollama or OpenAI).
+- 💬 Real-time response streaming to frontend.
+- 🏢 Multi-tenant isolation for enterprise usage.
 
 ---
 
-## 🧩 2. Key Components
+## Architecture & Components
 
-### 🖥️ Frontend (React)
-- Chat UI (ChatGPT-style)
-- Admin panel for document upload
-- Language toggle (i18n)
-- Tenant-scoped views
+### 1. React Frontend
 
-### 🔗 API Gateway (.NET)
-- Auth (JWT)
-- Routes chat/doc actions to Python backend
-- Manages tenants and permissions
-- Serves user/session isolation
+- Chat interface with real-time streaming.
+- Admin panel for uploading documents.
+- Language toggle (i18n).
+- Tenant-aware context handling.
 
-### 🧠 RAG Backend (Python)
-- Chunking & embedding via models like `all-MiniLM-L6-v2`
-- Stores vectors in Qdrant
-- Queries Mistral for answers with retrieved context
-- Future: Hybrid SQL-RAG answering
+### 2. Middleware API (.NET)
 
-### 🗂️ Qdrant (Vector DB)
-- Tenant-specific vector storage
-- Rich metadata (e.g., title, language)
-- Fast ANN search with filtering
+- Handles authentication via JWT.
+- Exposes endpoints for chat and document ingestion.
+- Forwards requests to Python Ingestor.
+- Multi-tenant aware with user/session scoping.
 
-### 🧠 Mistral (Local LLM)
-- Hosted locally via [Ollama](https://ollama.com/)
-- Lightweight and performant
-- Can be wrapped for template-based prompting
-- Streams responses token-by-token
+### 3. Ingestor (Python, FastAPI)
+
+- `/ingest`: Accepts documents, extracts text, chunks, and embeds using BAAI/bge-base-en.
+- `/chat`: Accepts questions, embeds them, searches in Qdrant, and queries LLM for answers.
+- Supports both local (Mistral, Phi2 via Ollama) and cloud-based (OpenAI) models.
+
+### 4. Qdrant (Vector DB)
+
+- Tenant-specific collections.
+- Stores document and question embeddings.
+- Supports fast similarity search with filtering.
+
+### 5. LLMs
+
+- **Local:** Mistral, Phi2 via Ollama.
+- **Remote:** OpenAI (e.g., gpt-3.5-turbo).
+- Configuration via `LLM_PROVIDER` environment variable.
 
 ---
 
@@ -74,28 +82,27 @@
 
 ---
 
-## 🚧 Roadmap
+## Environment Variables
 
-- [ ] SQL Data Connectors (Structured + Semantic Q&A)
-- [ ] Voice-to-text upload
-- [ ] Feedback & Retraining UI
-- [ ] Analytics & usage reporting
+Each service accepts the following environment variables:
 
----
+**Ingestor:**
 
-## 📦 Deployment
+- `QDRANT_HOST`
+- `QDRANT_PORT`
+- `OLLAMA_URL`
+- `LLM_PROVIDER`
+- `OPENAI_API_KEY`
 
-- All components are containerized (Docker)
-- Can run fully offline on your own infrastructure
-- No data leaves your system
+**Middleware:**
 
----
-
-## 🙌 Credits
-
-Built with ❤️ by AST for internal AI enablement — made for privacy, control, and real-world AI adoption.
+- Configuration via `.NET` `appsettings.json` (PostgreSQL, JWT, etc.)
 
 ---
+
+# Sequence diagram
+![diagram](https://github.com/user-attachments/assets/76ca1e3d-983f-4ef1-ab41-4dfb02ed1d2e)
+
 
 # System Flow
 <img width="416" alt="search_vault_flow_diagram" src="https://github.com/user-attachments/assets/1fcc29e6-5c9b-4cd5-902d-f18cf5b7059b" />
@@ -104,16 +111,11 @@ Built with ❤️ by AST for internal AI enablement — made for privacy, contro
 # System overview
 ![SearchVault - visual selection (1)](https://github.com/user-attachments/assets/544460c8-d03d-4e74-8c12-c6a06bb6315d)
 
-
-
 ---
 
-# 📥 Ingestor (Python, FastAPI) Setup
+## Deployment
 
-The Ingestor is a FastAPI-based microservice responsible for:
-- Parsing documents (PDF, DOCX, TXT, etc.)
-- Chunking and embedding content using a local model
-- Storing vector embeddings in Qdrant for RAG-based retrieval
+All components are dockerized and Kubernetes-ready.
 
 ## 🔧 Setup Instructions
 
@@ -154,4 +156,41 @@ Swagger UI: http://localhost:8000/docs - it may take some time for the app to st
 
 <img width="1309" alt="image" src="https://github.com/user-attachments/assets/26fae912-20da-4b75-bf12-751a89e53295" />
 
+## 7. Middleware (.NET)
+
+```bash
+docker build -t searchvault-middleware .
+docker run --name middleware -p 5080:80 --network searchvault-net searchvault-middleware
+````
+
 ---
+
+## Prompt template:
+
+[
+  {
+    "role": "system",
+    "content": "You are an assistant for answering questions about German construction laws. Use only the provided context."
+  },
+  {
+    "role": "user",
+    "content": "Context:\n<retrieved context>\n\nQuestion: <user question>"
+  }
+]
+
+---
+
+## Switching LLMs
+
+# Use OpenAI
+LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+
+# Use local model via Ollama
+LLM_PROVIDER=local
+OLLAMA_URL=http://host.docker.internal:11434/api/chat
+
+---
+
+## License & Contribution
+Made with ❤️ by [AST](https://ast-lb.com/) Team. Contributions welcome.
