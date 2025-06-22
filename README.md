@@ -180,14 +180,18 @@ docker run --name middleware -p 5080:80 --network searchvault-net searchvault-mi
 
 ---
 
-## Switching LLMs
+# Switching LLMs
 
-# Use OpenAI
+## Use OpenAI
+
 LLM_PROVIDER=openai
+
 OPENAI_API_KEY=sk-...
 
-# Use local model via Ollama
+## Use local model via Ollama
+
 LLM_PROVIDER=local
+
 OLLAMA_URL=http://host.docker.internal:11434/api/chat
 
 ---
