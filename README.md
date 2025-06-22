@@ -102,7 +102,9 @@ Built with ❤️ by AST for internal AI enablement — made for privacy, contro
 
 
 # System overview
-<img width="563" alt="SearchVault_Componenets" src="https://github.com/user-attachments/assets/1a79f808-fdb8-4e4b-9562-a64255ebd059" />
+![SearchVault - visual selection (1)](https://github.com/user-attachments/assets/544460c8-d03d-4e74-8c12-c6a06bb6315d)
+
+
 
 ---
 
