@@ -97,8 +97,8 @@ Built with ❤️ by AST for internal AI enablement — made for privacy, contro
 
 ---
 
-# System Design
-<img width="862" alt="SearchVault_Systemdesign" src="https://github.com/user-attachments/assets/8f037ce1-8263-45cd-bdfa-b1529dd26c04" />
+# System Flow
+<img width="416" alt="search_vault_flow_diagram" src="https://github.com/user-attachments/assets/1fcc29e6-5c9b-4cd5-902d-f18cf5b7059b" />
 
 
 # System overview
