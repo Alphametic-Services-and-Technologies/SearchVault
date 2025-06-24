@@ -58,15 +58,12 @@ function Chat() {
 
                   // Update the assistant's message incrementally
                   setMessages((prev) => {
-                     const updated = [...prev];
-
-                     const last = updated[updated.length - 1];
-
-                     if (last.role === 'assistant') {
-                        last.content += chunk;
-                     }
-
-                     return [...updated];
+                     return prev.map((msg, index) => {
+                        if (index === prev.length - 1 && msg.role === 'assistant') {
+                           return { ...msg, content: msg.content + chunk };
+                        }
+                        return msg;
+                     });
                   });
                }
             }
