@@ -56,7 +56,7 @@ async def chat(request: ChatRequest):
     # Step 4: Build prompt
     prompt = [
         {"role": "system",
-         "content": "You are an assistant for answering questions about German construction laws. Use only the provided context."},
+         "content": "You are a precise and factual assistant for answering questions **strictly** about German construction law. Only answer using the provided context. If the context does not contain the answer, say 'The information is not available in the provided documents.' Do not make assumptions or fabricate answers."},
         {"role": "user", "content": f"Context:\n{context_text}\n\nQuestion: {question}"}
     ]
 
@@ -71,7 +71,7 @@ async def chat(request: ChatRequest):
 
 async def stream_local_llm(prompt):
     payload = {
-        "model": "phi",
+        "model": "mistral",
         "stream": True,
         "messages": prompt
     }
