@@ -134,6 +134,8 @@ function SidebarLayout() {
                p: 3,
                width: { sm: `calc(100% - ${drawerWidth}px)` },
                mt: 8,
+               height: 'calc(100vh - 64px)', // subtract AppBar height
+               overflow: 'hidden', // prevent double scrollbars
             }}
          >
             <Outlet />

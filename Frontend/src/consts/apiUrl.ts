@@ -1,1 +1,1 @@
-export const API_URL = 'https://jsonplaceholder.typicode.com';
+export const API_URL = 'https://searchvault-middleware.ast-lb.com';
