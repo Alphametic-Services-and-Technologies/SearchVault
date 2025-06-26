@@ -182,7 +182,7 @@ function Chat() {
                <IconButton
                   onClick={() => sendMessage(input)}
                   color="primary"
-                  disabled={!input.trim()}
+                  disabled={!input.trim() || isStreaming || isLoading}
                >
                   <SendIcon />
                </IconButton>
