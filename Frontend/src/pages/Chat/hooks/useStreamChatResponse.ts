@@ -109,4 +109,14 @@ const useStreamChatResponse = (onMessageSend: () => void, token: string, tenantI
    return { messages, sendMessage, isStreaming, isLoading };
 };
 
+export const getLastMessage = (messages: ChatMessage[]): ChatMessage | null => {
+   if (messages.length === 0) return null;
+
+   const lastMessage = messages[messages.length - 1];
+
+   if (lastMessage.role === 'assistant') return lastMessage;
+
+   return null;
+};
+
 export default useStreamChatResponse;
