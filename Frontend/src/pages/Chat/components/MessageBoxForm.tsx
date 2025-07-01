@@ -34,6 +34,9 @@ function MessageBoxForm({ onFormSubmit, disableSubmit = false }: MessageBoxFormP
                onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                      e.preventDefault();
+
+                     if (disableSubmit || message?.length === 0) return;
+
                      handleSubmit(onSubmit)();
                   }
                }}
