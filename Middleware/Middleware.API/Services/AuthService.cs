@@ -15,7 +15,7 @@ namespace Middleware.API.Services
         private readonly IRepository<User> _userRepository = userRepository;
         private readonly TokenConfiguration _tokenConfiguration = tokenConfiguration;
 
-        public async Task<string> LoginAsync(LoginRequest request, CancellationToken cancellationToken)
+        public async Task<(string, string)> LoginAsync(LoginRequest request, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetByFilter(u => u.Email == request.Email && u.InactiveDate == null, cancellationToken);
 
@@ -28,7 +28,7 @@ namespace Middleware.API.Services
             if (result == PasswordVerificationResult.Failed)
                 throw new Exception("Invalid credentials");
 
-            return GenerateJwtToken(user);
+            return (GenerateJwtToken(user), user.TenantID.ToString());
         }
 
         public async Task<string> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken)
