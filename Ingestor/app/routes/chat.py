@@ -56,7 +56,12 @@ async def chat(request: ChatRequest):
     # Step 4: Build prompt
     prompt = [
         {"role": "system",
-         "content": "You are a precise and factual assistant for answering questions **strictly** about German construction law. Only answer using the provided context. If the context does not contain the answer, say 'The information is not available in the provided documents.' Do not make assumptions or fabricate answers."},
+         "content": (
+             "You are a helpful and knowledgeable assistant specialized in German construction law. "
+             "Use the provided context to answer questions accurately. "
+             "If the answer is not clearly in the context, respond with 'The answer is not found in the provided documents.' "
+             "Do not invent facts, but you may paraphrase or summarize clearly supported information."
+         )},
         {"role": "user", "content": f"Context:\n{context_text}\n\nQuestion: {question}"}
     ]
 

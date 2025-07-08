@@ -25,7 +25,7 @@ namespace Middleware.API.Controllers
         public async Task<IActionResult> Login(LoginRequest request, CancellationToken cancellationToken)
         {
             var loninResult = await _authService.LoginAsync(request, cancellationToken);
-            return Ok(new { loninResult.Item1, tenantid = loninResult.Item2 });
+            return Ok(new { token = loninResult.Item1, tenantid = loninResult.Item2 });
         }
     }
 }
