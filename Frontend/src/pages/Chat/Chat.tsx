@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import useStreamChatResponse, { getLastMessage } from './hooks/useStreamChatResponse';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -13,13 +13,14 @@ import useAnimatedText from './hooks/useAnimatedText';
 
 function Chat() {
    // Temp states
-   const [token, setToken] = useState('');
-   const [tenantId, setTenantId] = useState('');
+   // const [token, setToken] = useState('');
+   // const [tenantId, setTenantId] = useState('');
+
 
    const { messages, sendMessage, isStreaming, isLoading } = useStreamChatResponse(
       () => {},
-      token,
-      tenantId
+      // token,
+      // tenantId
    );
 
    const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -36,7 +37,7 @@ function Chat() {
 
    return (
       <>
-         <input
+         {/* <input
             type="text"
             placeholder="token"
             value={token}
@@ -48,7 +49,7 @@ function Chat() {
             placeholder="tenantId"
             value={tenantId}
             onChange={(e) => setTenantId(e.target.value)}
-         />
+         /> */}
 
          <Box display="flex" flexDirection="column" height="100%" p={2}>
             {/* Messages */}
@@ -87,7 +88,7 @@ function Chat() {
                                           bgcolor: isLastAssistant
                                              ? '#ffecec'
                                              : msg.role === 'user'
-                                             ? '#1976d2'
+                                             ? 'primary.main'
                                              : '#e0e0e0',
                                           color: msg.role === 'user' ? '#fff' : '#000',
                                           px: 2,
