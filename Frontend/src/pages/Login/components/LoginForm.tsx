@@ -33,8 +33,6 @@ function LoginForm({ onSuccess }: LoginFormProps) {
         try {
             const response = await dispatch(loginAction(data)).unwrap();
 
-            console.log('Login Response:', JSON.stringify(response, null, 2));
-
             enqueueSnackbar({
                 variant: 'success',
                 message: 'Login successfully'
@@ -85,13 +83,7 @@ function LoginForm({ onSuccess }: LoginFormProps) {
                     size="large"
                     endIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : undefined}
                     sx={{
-                        backgroundColor: 'primary.main',
-                        '&:hover': {
-                            backgroundColor: '#1e3333'
-                        },
-                        '&:disabled': {
-                            backgroundColor: '#8a9a9a'
-                        }
+                        backgroundColor: 'primary.main'
                     }}
                 >
                     Login

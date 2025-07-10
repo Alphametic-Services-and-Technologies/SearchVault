@@ -4,7 +4,7 @@ import Home from './pages/Home/Home';
 import Chat from './pages/Chat/Chat';
 import Login from './pages/Login/login';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
-import NoAuthorizedRoute from './components/NoAuthorizedRoute/NoAuthorizedRoute';
+import NoAuthRoute from './components/NoAuthRoute/NoAuthRoute';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './Theme/theme';
 
@@ -14,14 +14,14 @@ function App() {
          <Router>
             <Routes>
                <Route path="/" element={
-                  <NoAuthorizedRoute>
+                  <NoAuthRoute>
                      <Login />
-                  </NoAuthorizedRoute>
+                  </NoAuthRoute>
                } />
                <Route path="/login" element={
-                  <NoAuthorizedRoute>
+                  <NoAuthRoute>
                      <Login />
-                  </NoAuthorizedRoute>
+                  </NoAuthRoute>
                } />
 
                <Route path="/app" element={

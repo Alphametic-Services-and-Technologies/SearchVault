@@ -2,11 +2,11 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAppSelector } from '../../hooks/redux/redux';
 
-interface NoAuthorizedRouteProps {
+interface NoAuthRouteProps {
    children: React.ReactNode;
 }
 
-function NoAuthorizedRoute({ children }: NoAuthorizedRouteProps) {
+function NoAuthRoute({ children }: NoAuthRouteProps) {
    const { isAuthenticated } = useAppSelector((state) => state.auth);
    
    if (isAuthenticated) {
@@ -16,4 +16,4 @@ function NoAuthorizedRoute({ children }: NoAuthorizedRouteProps) {
    return <>{children}</>;
 }
 
-export default NoAuthorizedRoute;
+export default NoAuthRoute;

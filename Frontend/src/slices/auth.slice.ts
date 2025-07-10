@@ -1,38 +1,65 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { AuthState, LoginData } from "../types/auth.type";
+import type { LoginData, LoginResponse } from "../types/auth.type";
 import { authService } from "../services/auth.service";
 
 
+export interface AuthState {
+    tenantId: string | null;
+    loading: boolean;
+    error: string | null;
+    isAuthenticated: boolean;
+    token: string | null;
+}
 
-const initialState: AuthState = {
-    user: JSON.parse(localStorage.getItem('user') || 'null'),
-    loading: false,
-    error: null,
-    isAuthenticated: !!localStorage.getItem('authToken'),
-    token: localStorage.getItem('authToken'),
+const getAuthFromStorage = (): Partial<AuthState> => {
+    const storedAuth = localStorage.getItem('auth');
+    if (storedAuth) {
+        try {
+            const parsed = JSON.parse(storedAuth);
+            return {
+                token: parsed.token || null,
+                tenantId: parsed.tenantId || null,
+                isAuthenticated: !!(parsed.token && parsed.tenantId),
+            };
+        } catch {
+            return {};
+        }
+    }
+    return {};
 };
 
-export const loginAction = createAsyncThunk('auth/login', async (loginData: LoginData, { rejectWithValue }) => {
-    try {
-        const response = await authService.login(loginData);
-        return response;
+const initialState: AuthState = {
+    tenantId: null,
+    loading: false,
+    error: null,
+    isAuthenticated: false,
+    token: null,
+    ...getAuthFromStorage(),
+};
+
+export const loginAction = createAsyncThunk<LoginResponse, LoginData>(
+    'auth/login',
+    async (loginData: LoginData, { rejectWithValue }) => {
+        try {
+            const response = await authService.login(loginData);
+            return response;
+        } catch (error: any) {
+            return rejectWithValue(error.response?.data || { message: 'Login failed' });
+        }
     }
-    catch (error: any) {
-        return rejectWithValue(error.response?.data || { message: 'Loginfailed' });
-    }
-})
+);
 
 const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
         logout: (state) => {
-            state.user = null,
-                state.isAuthenticated = false,
-                state.error = null
+            state.tenantId = null;
+            state.isAuthenticated = false;
+            state.error = null;
+            state.token = null;
 
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('user');
+            localStorage.removeItem('auth');
         },
         clearError: (state) => {
             state.error = null
@@ -46,11 +73,18 @@ const authSlice = createSlice({
             })
             .addCase(loginAction.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload.tenantid;
-                state.token = action.payload.item1;
+
+                const payload = action.payload as LoginResponse;
+
+                state.token = payload.token;
+                state.tenantId = payload.tenantId;
                 state.isAuthenticated = true;
-                localStorage.setItem('authToken', action.payload.item1);
-                localStorage.setItem('user', JSON.stringify(action.payload));
+
+                const authData = {
+                    token: payload.token,
+                    tenantId: payload.tenantId,
+                };
+                localStorage.setItem('auth', JSON.stringify(authData));
             })
             .addCase(loginAction.rejected, (state, action) => {
                 state.loading = false,

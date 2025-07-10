@@ -1,7 +1,6 @@
 import React from 'react';
 import {
    AppBar,
-   Avatar,
    Box,
    CssBaseline,
    Divider,
@@ -12,20 +11,15 @@ import {
    ListItemButton,
    ListItemIcon,
    ListItemText,
-   Menu,
-   MenuItem,
    Toolbar,
    Typography,
    useTheme,
 } from '@mui/material';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
-import LogoutIcon from '@mui/icons-material/Logout';
-import PersonIcon from '@mui/icons-material/Person';
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
-import { useAppDispatch, useAppSelector } from '../../hooks/redux/redux';
-import { logout } from '../../slices/auth.slice';
+import UserMenu from '../UserMenu/UserMenu';
 
 const drawerWidth = 240;
 
@@ -38,27 +32,9 @@ const navItems = [
 
 function SidebarLayout() {
    const [mobileOpen, setMobileOpen] = React.useState(false);
-   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
    const theme = useTheme();
-
    const location = useLocation();
    const navigate = useNavigate();
-   const dispatch = useAppDispatch();
-   const { user } = useAppSelector(state => state.auth);
-
-   const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
-      setAnchorEl(event.currentTarget)
-   }
-
-   const handleMenuClose = () => {
-      setAnchorEl(null);
-   }
-
-   const handleLogout = () => {
-      dispatch(logout())
-      navigate('/')
-      handleMenuClose()
-   }
 
    const handleDrawerToggle = () => {
       setMobileOpen(!mobileOpen);
@@ -147,26 +123,8 @@ function SidebarLayout() {
                      {PROJECT_NAME}
                   </Typography>
                </Box>
-               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="body2" color="inherit" sx={{ display: { xs: 'none', sm: 'block' } }}>
-                     {user?.username}
-                  </Typography>
-                  <IconButton
-                     onClick={handleAvatarClick}
-                     sx={{ p: 0 }}
-                  >
-                     <Avatar
-                        sx={{
-                           bgcolor: 'white',
-                           color: theme.palette.primary.main,
-                           width: 32,
-                           height: 32
-                        }}
-                     >
-                        {user?.username?.charAt(0).toUpperCase() || 'U'}
-                     </Avatar>
-                  </IconButton>
-               </Box>
+
+               <UserMenu />
             </Toolbar>
          </AppBar>
 
@@ -201,33 +159,6 @@ function SidebarLayout() {
          >
             {drawer}
          </Drawer>
-
-         <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-            anchorOrigin={{
-               vertical: 'bottom',
-               horizontal: 'right'
-            }}
-            transformOrigin={{
-               vertical: 'top',
-               horizontal: 'left'
-            }}
-         >
-            <MenuItem onClick={() => { handleMenuClose(); }}>
-               <ListItemIcon>
-                  <PersonIcon fontSize="small" />
-               </ListItemIcon>
-               Profile
-            </MenuItem>
-            <MenuItem onClick={handleLogout}>
-               <ListItemIcon>
-                  <LogoutIcon fontSize="small" />
-               </ListItemIcon>
-               Logout
-            </MenuItem>
-         </Menu>
 
          <Box
             component="main"
