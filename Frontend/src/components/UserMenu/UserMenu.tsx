@@ -14,6 +14,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux/redux';
 import { logout } from '../../slices/auth.slice';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 interface UserMenuProps {
    className?: string;
@@ -24,7 +25,7 @@ function UserMenu({ className }: UserMenuProps) {
    const theme = useTheme();
    const navigate = useNavigate();
    const dispatch = useAppDispatch();
-   const { tenantId } = useAppSelector(state => state.auth);
+   const { tenantId } = useAppSelector((state) => state.auth);
 
    const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
       setAnchorEl(event.currentTarget);
@@ -46,22 +47,20 @@ function UserMenu({ className }: UserMenuProps) {
 
    return (
       <Box className={className} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-         <Typography variant="body2" color="inherit" sx={{ display: { xs: 'none', sm: 'block' } }}>
+         {/* <Typography variant="body2" color="inherit" sx={{ display: { xs: 'none', sm: 'block' } }}>
             {tenantId}
-         </Typography>
-         <IconButton
-            onClick={handleAvatarClick}
-            sx={{ p: 0 }}
-         >
+         </Typography> */}
+         <IconButton onClick={handleAvatarClick} sx={{ p: 0 }}>
             <Avatar
                sx={{
                   bgcolor: 'white',
                   color: theme.palette.primary.main,
                   width: 32,
-                  height: 32
+                  height: 32,
                }}
             >
-               {tenantId?.charAt(0).toUpperCase() || 'T'}
+               {/* {tenantId?.charAt(0).toUpperCase() || 'T'} */}
+               <AccountCircleIcon />
             </Avatar>
          </IconButton>
 
@@ -71,11 +70,11 @@ function UserMenu({ className }: UserMenuProps) {
             onClose={handleMenuClose}
             anchorOrigin={{
                vertical: 'bottom',
-               horizontal: 'right'
+               horizontal: 'right',
             }}
             transformOrigin={{
                vertical: 'top',
-               horizontal: 'left'
+               horizontal: 'left',
             }}
          >
             <MenuItem onClick={handleProfile}>
