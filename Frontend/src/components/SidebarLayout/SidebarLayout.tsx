@@ -19,22 +19,20 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
+import UserMenu from '../UserMenu/UserMenu';
 
 const drawerWidth = 240;
 
-const PROJECT_NAME = 'Template project';
+const PROJECT_NAME = 'SearchVault';
 
 const navItems = [
-   { text: 'Home', icon: <HomeIcon />, path: '/' },
-   // { text: 'About', icon: <InfoIcon />, path: '/about' },
-   // { text: 'Posts', icon: <InfoIcon />, path: '/posts' },
-   { text: 'Chat', icon: <InfoIcon />, path: '/chat' },
+   { text: 'Home', icon: <HomeIcon />, path: '/app' },
+   { text: 'Chat', icon: <InfoIcon />, path: '/app/chat' },
 ];
 
 function SidebarLayout() {
    const [mobileOpen, setMobileOpen] = React.useState(false);
    const theme = useTheme();
-
    const location = useLocation();
    const navigate = useNavigate();
 
@@ -43,12 +41,12 @@ function SidebarLayout() {
    };
 
    const drawer = (
-      <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
+      <Box sx={{ textAlign: 'center' }}>
          <Box my={7.2} />
 
          <Divider />
 
-         <List>
+         <List sx={{ flexGrow: 1 }}>
             {navItems.map(({ text, icon, path }) => {
                const isActive = location.pathname === path;
 
@@ -76,7 +74,14 @@ function SidebarLayout() {
    return (
       <Box sx={{ display: 'flex' }}>
          <CssBaseline />
-         <AppBar component="nav" position="fixed" sx={{ zIndex: theme.zIndex.drawer + 1 }}>
+         <AppBar
+            component="nav"
+            position="fixed"
+            sx={{
+               zIndex: theme.zIndex.drawer + 1,
+               backgroundColor: 'primary.main'
+            }}
+         >
             <Toolbar>
                <IconButton
                   color="inherit"
@@ -87,13 +92,42 @@ function SidebarLayout() {
                >
                   <MenuIcon />
                </IconButton>
-               <Typography variant="h6" noWrap component="div">
-                  {PROJECT_NAME}
-               </Typography>
+
+               <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
+                  <Box
+                     sx={{
+                        width: 50,
+                        height: 50,
+                        borderRadius: '50%',
+                        backgroundColor: 'white',
+                        border: '2px solid #f0f0f0',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        mr: 1.5,
+                        boxShadow: 1
+                     }}
+                  >
+                     <Box
+                        component="img"
+                        src="/src/assets/logo1.png"
+                        alt="SearchVault Logo"
+                        sx={{
+                           height: 38,
+                           width: 38,
+                           objectFit: 'contain'
+                        }}
+                     />
+                  </Box>
+                  <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 600 }}>
+                     {PROJECT_NAME}
+                  </Typography>
+               </Box>
+
+               <UserMenu />
             </Toolbar>
          </AppBar>
 
-         {/* Drawer for desktop */}
          <Drawer
             variant="permanent"
             sx={{
@@ -110,7 +144,6 @@ function SidebarLayout() {
             {drawer}
          </Drawer>
 
-         {/* Drawer for mobile */}
          <Drawer
             variant="temporary"
             open={mobileOpen}
@@ -134,8 +167,8 @@ function SidebarLayout() {
                p: 3,
                width: { sm: `calc(100% - ${drawerWidth}px)` },
                mt: 8,
-               height: 'calc(100vh - 64px)', // subtract AppBar height
-               overflow: 'hidden', // prevent double scrollbars
+               height: 'calc(100vh - 64px)',
+               overflow: 'hidden',
             }}
          >
             <Outlet />

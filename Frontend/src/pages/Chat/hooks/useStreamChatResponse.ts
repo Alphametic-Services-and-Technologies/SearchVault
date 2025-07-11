@@ -1,5 +1,14 @@
 import { useRef, useState } from 'react';
 import { API_URL } from '../../../consts/apiUrl';
+import type { LoginResponse } from '../../../types/auth.type';
+
+const getLoggedInUser = () => {
+   const loggedInUserLocalStorage = localStorage.getItem("user");
+
+   const loggedInUser: LoginResponse | null = loggedInUserLocalStorage ? JSON.parse(loggedInUserLocalStorage) : null;
+
+   return loggedInUser;
+}
 
 const sanitizeMessage = (message: string) => {
    return message.trim();
@@ -21,8 +30,9 @@ interface ChatMessage {
 }
 
 // The token and the tenantId here is temporary we are going to be fetching it from the user's local storage, after he is logged in
-
-const useStreamChatResponse = (onMessageSend: () => void, token: string, tenantId: string) => {
+const useStreamChatResponse = (onMessageSend: () => void, 
+// token: string, tenantId: string
+) => {
    const [messages, setMessages] = useState<ChatMessage[]>([]);
    const [isStreaming, setIsStreaming] = useState(false);
    const [isLoading, setIsLoading] = useState(false);
@@ -50,10 +60,15 @@ const useStreamChatResponse = (onMessageSend: () => void, token: string, tenantI
       try {
          setIsLoading(true);
 
+
+         const loggedInUser = getLoggedInUser();
+
+         if(!loggedInUser) throw new Error("No logged in user");
+
          const response = await fetch(`${API_URL}/chat`, {
             method: 'POST',
-            headers: getRequestHeaders(token),
-            body: getRequestBody(sanitizedMessage, tenantId),
+            headers: getRequestHeaders(loggedInUser.item1),
+            body: getRequestBody(sanitizedMessage, loggedInUser.tenantid),
             signal: controller.signal,
          });
 
