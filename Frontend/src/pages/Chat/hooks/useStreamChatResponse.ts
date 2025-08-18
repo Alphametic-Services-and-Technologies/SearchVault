@@ -53,6 +53,8 @@ const useStreamChatResponse = (
       controllerRef.current = controller;
 
       try {
+         assistantMessageRef.current = '';
+
          setIsLoading(true);
 
          if (!loggedInUser.token || !loggedInUser.tenantId) throw new Error('No logged in user');
@@ -105,7 +107,6 @@ const useStreamChatResponse = (
          }
 
          setIsStreaming(false);
-         assistantMessageRef.current = '';
       } catch (e) {
          console.log('Stream message error: ', e);
          setIsLoading(false);
