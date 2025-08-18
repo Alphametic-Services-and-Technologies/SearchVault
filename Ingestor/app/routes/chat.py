@@ -76,7 +76,7 @@ async def chat(request: ChatRequest):
 
 async def stream_local_llm(prompt):
     payload = {
-        "model": "mistral",
+        "model": "gemma:2b",
         "stream": True,
         "messages": prompt
     }
