@@ -89,7 +89,7 @@ async def chat(request: ChatRequest):
 
 async def stream_local_llm(prompt):
     payload = {
-        "model": "llama3.2:3b",
+        "model": "llama3.2",
         "stream": True,
         "messages": prompt
     }
