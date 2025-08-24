@@ -10,6 +10,11 @@ namespace Middleware.Data.Repositories
         private readonly MiddlewareDbContext _dbContext = dbContext;
         private readonly DbSet<T> _entities = dbContext.Set<T>();
 
+        public async Task<T?> GetByID(Guid id, CancellationToken cancellationToken)
+        {
+            return await _entities.FindAsync(id, cancellationToken);
+        }
+
         public async Task<T?> GetByFilter(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)
         {
             return await _entities.SingleOrDefaultAsync(predicate, cancellationToken);
@@ -29,6 +34,14 @@ namespace Middleware.Data.Repositories
             var t = _entities.Attach(entity);
             _dbContext.Entry(entity).State = EntityState.Modified;
             return t.Entity;
+        }
+
+        public void Remove(T entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+
+            _entities.Remove(entity);
         }
 
         public async Task<int> Commit(CancellationToken token)

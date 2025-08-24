@@ -6,5 +6,6 @@ namespace Middleware.API.Services.Interfaces
     {
         Task UploadAsync(DocumentUploadRequest request, string uploadedByEmail, Guid tenantId, CancellationToken cancellationToken);
         Task<List<DocumentDto>> GetDocumentsForTenantAsync(Guid tenantId, CancellationToken cancellationToken);
+        Task DeleteDocumentAsync(Guid documentID, CancellationToken cancellationToken);
     }
 }

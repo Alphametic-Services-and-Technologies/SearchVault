@@ -56,12 +56,35 @@ namespace Middleware.API.Services
             {
                 { new StreamContent(request.File.OpenReadStream()), "file", request.File.FileName },
                 { new StringContent(tenantId.ToString()), "tenant_id" },
-                { new StringContent(Path.GetFileNameWithoutExtension(request.File.FileName)), "doc_title" }
+                { new StringContent(Path.GetFileNameWithoutExtension(request.File.FileName)), "doc_title" },
+                { new StringContent(document.ID.ToString()), "middleware_id" }
             };
 
             var url = _ingestorConfiguration.Port > 0 ? $"http://{_ingestorConfiguration.URL}:{_ingestorConfiguration.Port}/ingest" : $"http://{_ingestorConfiguration.URL}/ingest";
             var response = await client.PostAsync(url, content, cancellationToken);
             response.EnsureSuccessStatusCode();
+        }
+
+        public async Task DeleteDocumentAsync(Guid documentID, CancellationToken cancellationToken)
+        {
+            var document = await _documentRepository.GetByID(documentID, cancellationToken);
+            if (document is null) return;
+
+            using var client = _httpClientFactory.CreateClient();
+
+            var baseUrl = _ingestorConfiguration.Port > 0
+                ? $"http://{_ingestorConfiguration.URL}:{_ingestorConfiguration.Port}"
+                : $"http://{_ingestorConfiguration.URL}";
+
+            var url = $"{baseUrl}/document?tenant_id={document.TenantID}&middleware_id={document.ID}";
+
+            // Call Ingestor first
+            var resp = await client.DeleteAsync(url, cancellationToken);
+            resp.EnsureSuccessStatusCode();
+
+            // Delete from DB
+            _documentRepository.Remove(document);
+            await _documentRepository.Commit(cancellationToken);
         }
     }
 }

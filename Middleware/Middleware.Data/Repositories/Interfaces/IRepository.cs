@@ -12,5 +12,7 @@ namespace Middleware.Data.Repositories.Interfaces
         Task<T?> Find(Guid id, CancellationToken cancellationToken);
         Task<bool> Any(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken);
         Task<IList<T>> GetMany(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken);
+        void Remove(T entity);
+        Task<T?> GetByID(Guid id, CancellationToken cancellationToken);
     }
 }

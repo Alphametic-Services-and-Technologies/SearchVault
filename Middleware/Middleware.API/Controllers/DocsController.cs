@@ -33,5 +33,12 @@ namespace Middleware.API.Controllers
             var docs = await _docsService.GetDocumentsForTenantAsync(tenantId, cancellationToken);
             return Ok(docs);
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(Guid documentID, CancellationToken cancellationToken)
+        {
+            await _docsService.DeleteDocumentAsync(documentID, cancellationToken);
+            return NoContent();
+        }
     }
 }
