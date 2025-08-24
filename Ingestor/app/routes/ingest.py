@@ -6,8 +6,9 @@ logging.basicConfig(level=logging.INFO)
 
 router = APIRouter()
 
+
 @router.post("/ingest")
-async def ingest(file: UploadFile, tenant_id: str = Form(...), doc_title: str = Form(...)):
+async def ingest(file: UploadFile, tenant_id: str = Form(...), doc_title: str = Form(...), middleware_id: str = Form(...)):
     try:
         # 1. Extract raw text
         raw_text = await parser.extract_text(file)
@@ -25,7 +26,7 @@ async def ingest(file: UploadFile, tenant_id: str = Form(...), doc_title: str = 
         logging.info(f"{len(vectors)} vectors extracted")
 
         # 4. Store in Qdrant with metadata
-        qdrant.upsert(vectors, tenant_id=tenant_id, doc_title=doc_title)
+        qdrant.upsert(vectors, tenant_id=tenant_id, doc_title=doc_title, middleware_id=middleware_id)
 
         logging.info("qdrant part done")
 

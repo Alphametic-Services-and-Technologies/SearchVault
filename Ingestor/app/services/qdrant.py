@@ -1,5 +1,5 @@
 from qdrant_client import QdrantClient
-from qdrant_client.models import PointStruct, VectorParams, Distance, Filter, FieldCondition, MatchValue, SearchRequest
+from qdrant_client.models import PointStruct, VectorParams, Distance, Filter, FieldCondition, MatchValue, SearchRequest, FilterSelector
 import uuid
 import os
 import logging
@@ -15,13 +15,16 @@ client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
 VECTOR_SIZE = 768  # For BGE-base
 DISTANCE_METRIC = Distance.COSINE
 
+
 def ensure_collection(tenant_id: str):
     collection_name = f"tenant_{tenant_id}"
     if not client.collection_exists(collection_name):
-        client.create_collection(collection_name=collection_name, vectors_config=VectorParams(size=VECTOR_SIZE, distance=DISTANCE_METRIC))
+        client.create_collection(collection_name=collection_name,
+                                 vectors_config=VectorParams(size=VECTOR_SIZE, distance=DISTANCE_METRIC))
     return collection_name
 
-def upsert(vectors: list[dict], tenant_id: str, doc_title: str):
+
+def upsert(vectors: list[dict], tenant_id: str, doc_title: str, middleware_id: str):
     collection = ensure_collection(tenant_id)
 
     logging.info("upsert in qdrant")
@@ -34,12 +37,37 @@ def upsert(vectors: list[dict], tenant_id: str, doc_title: str):
             payload={
                 "text": item["text"],
                 "tenant_id": tenant_id,
-                "doc_title": doc_title
+                "doc_title": doc_title,
+                "middleware_id": middleware_id
             }
         )
         points.append(point)
 
     client.upsert(collection_name=collection, points=points)
+
+
+def delete_document(tenant_id: str, middleware_id: str):
+    """
+    Delete all points in a tenant collection matching a middleware_id.
+    """
+    collection = ensure_collection(tenant_id)
+
+    doc_filter = Filter(
+        must=[
+            FieldCondition(key="middleware_id", match=MatchValue(value=middleware_id)),
+            FieldCondition(key="tenant_id", match=MatchValue(value=tenant_id)),
+        ]
+    )
+
+    result = client.delete(
+        collection_name=collection,
+        points_selector=FilterSelector(filter=doc_filter),
+        wait=True
+    )
+
+    logging.info(f"Deleted document with middleware_id={middleware_id} in {collection}")
+    return result
+
 
 def search_similar_chunks(tenant: str, query_vector: list[float], top_k: int = 4):
     collection_name = f"tenant_{tenant}"
