@@ -8,7 +8,7 @@ function Login() {
 
    const handleLoginSuccess = () => {
       navigate('/app');
-   }
+   }  
 
    return (
       <Box
