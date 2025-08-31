@@ -14,5 +14,6 @@
     {
         public string Question { get; set; } = default!;
         public Guid TenantId { get; set; }
+        public string LLMProvider { get; set; } = "local";
     }
 }
