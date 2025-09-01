@@ -1,13 +1,15 @@
 import logging
+from transformers import AutoTokenizer
 from typing import List, Literal
 from sentence_transformers import SentenceTransformer
 
 logging.basicConfig(level=logging.INFO)
 
 MODEL_ID = "mixedbread-ai/mxbai-embed-large-v1"
+tok = AutoTokenizer.from_pretrained(MODEL_ID)
 _model = SentenceTransformer(MODEL_ID)
 
-def _apply_instruction(texts: List[str], kind: Literal["document","query"]) -> List[str]:
+def _apply_instruction(text: str, kind: Literal["document","query"]) -> List[str]:
     """
     Add instruction prefixes recommended for instruction-tuned embedding models.
     """
@@ -15,31 +17,21 @@ def _apply_instruction(texts: List[str], kind: Literal["document","query"]) -> L
         prefix = "Represent the document for retrieval: "
     else:  # "query"
         prefix = "Represent this sentence for searching relevant passages: "
-    return [prefix + t for t in texts]
+    return prefix + text
 
-def embed(chunks: list[str]) -> list[dict]:
+def embed(texts: List[str], kind: Literal["document","query"]="document") -> List[dict]:
     """
-        Embeds each chunk using BGE model.
-        Returns a list of dicts with 'text' and 'vector'.
+    Returns list of dicts: {"text": <original>, "vector": List[float]}
+    - kind="document" for ingestion
+    - kind="query" for user question
     """
-
-    embeddings = []
-
-    for chunk in chunks:
-        # Add BGE prompt (recommended)
-        prompt = "Represent this document for retrieval: " + chunk
-
-        inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=512)
-        outputs = model(**inputs)
-
-        cls_embedding = outputs.last_hidden_state[:, 0]
-        norm_vector = torch.nn.functional.normalize(cls_embedding, p=2, dim=1).squeeze().tolist()
-
-        logging.info(f"embed in embedder: {type(norm_vector)} - {type(norm_vector[0])} - {len(norm_vector)}")
-
-        embeddings.append({
-            "text": chunk,
-            "vector": norm_vector
-        })
-
-    return embeddings
+    assert len(texts) > 0
+    safe_texts = []
+    for i, t in enumerate(texts):
+        ids = tok.encode(t, add_special_tokens=False)
+        if len(ids) > 512:
+            logging.warning(f"[embed] chunk {i} has {len(ids)} tokens > 512; truncating")
+            t = tok.decode(ids[:512], skip_special_tokens=True)
+        safe_texts.append(t)
+    vecs = _model.encode(safe_texts, normalize_embeddings=True).tolist()
+    return [{"text": t, "vector": v} for t, v in zip(safe_texts, vecs)]

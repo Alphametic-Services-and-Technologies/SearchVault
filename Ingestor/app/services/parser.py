@@ -34,6 +34,5 @@ def extract_excel(content: bytes) -> str:
     df = pd.read_excel(io.BytesIO(content), sheet_name=None)
     combined = []
     for sheet_name, sheet_df in df.items():
-        combined.append(f"--- Sheet {sheet_name} ---")
         combined.append(sheet_df.to_string(index=False))
     return "\n\n".join(combined)

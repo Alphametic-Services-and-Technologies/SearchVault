@@ -21,7 +21,7 @@ async def ingest(file: UploadFile, tenant_id: str = Form(...), doc_title: str = 
         logging.info(f"{len(chunks)} chunks extracted")
 
         # 3. Embed each chunk
-        vectors = embedder.embed(chunks)
+        vectors = embedder.embed(chunks, "document")
 
         logging.info(f"{len(vectors)} vectors extracted")
 

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 import httpx
 from services.embedder import embed
@@ -12,6 +12,7 @@ class ChatRequest(BaseModel):
     question: str
     tenantId: str
     llmProvider: str
+    modelName: str
 
 logging.basicConfig(level=logging.INFO)
 
@@ -26,6 +27,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 async def chat(request: ChatRequest):
     question = request.question
     tenant_id = request.tenantId
+    model_name = request.modelName
 
     # Prefer FE setting; fall back to config
     llm_provider = request.llmProvider or LLM_PROVIDER
@@ -33,7 +35,7 @@ async def chat(request: ChatRequest):
     logging.info(f"Tenant ID: {tenant_id} - Question: {question}")
 
     # Step 1: Embed the question
-    question_vector = embed([question])[0]["vector"]
+    question_vector = embed([question], "query")[0]["vector"]
 
     logging.info("# Step 1: Embed the question - done")
     logging.info(f"length: {len(question_vector)}")
@@ -61,26 +63,29 @@ async def chat(request: ChatRequest):
     prompt = [
         {"role": "system",
          "content": (
-             "context will be passed as \"Context:\". "
-             "User question will be passed as \"Question:\". "
-             "Answer the question using only the information from the context. "
+             "Answer the following question based on the provided context. Follow these rules: "
+             "1. If the question is about vacation days, ALWAYS mention the company policy of 25 paid vacation days per year "
+             "2. For questions about specific employees, clearly state: - Their position and department - Number of vacation days taken - Number of vacation days remaining (25 minus days taken) "
+             "3. If looking at historical data, mention when we don't have the full year's context"
              "If you cannot answer this question based on the context, say \"I cannot answer this question based on the available information.\""
          )},
-        {"role": "user", "content": f"Context:\n{context_text}\n\nQuestion: {question}"}
+        {"role": "user", "content": f"Context:\n{context_text}\n\nHere's the original user prompt, answer with help of the retrieved passages:: {question}"}
     ]
 
     logging.info("# Step 4: Build prompt - done")
 
     if llm_provider == "openai":
-        logging.info("Open ai is used for chat")
+        logging.info(f"Open ai is used for chat with model: {model_name}")
         return StreamingResponse(stream_openai(prompt), media_type="text/event-stream")
     else:
-        logging.info("local LLM is used for chat")
-        return StreamingResponse(stream_local_llm(prompt), media_type="text/event-stream")
+        logging.info(f"local LLM is used for chat with model: {model_name}")
+        return StreamingResponse(stream_local_llm(prompt, model_name), media_type="text/event-stream")
 
-async def stream_local_llm(prompt):
+async def stream_local_llm(prompt, model_name):
     payload = {
-        "model": "llama3.2",
+        # "model": "llama3.2",
+        # "model": "mistral",
+        "model": model_name,
         "stream": True,
         "messages": prompt
     }

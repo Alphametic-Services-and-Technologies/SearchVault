@@ -1,4 +1,6 @@
-﻿namespace Middleware.API
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Middleware.API
 {
     public record RegisterRequest(string Email, string Password, string Role, Guid TenantId);
     public record LoginRequest(string Email, string Password);
@@ -12,8 +14,15 @@
 
     public class ChatRequest
     {
+        [Required]
         public string Question { get; set; } = default!;
+
+        [Required]
         public Guid TenantId { get; set; }
+
         public string LLMProvider { get; set; } = "local";
+
+        [Required]
+        public string ModelName { get; set; } = default!;
     }
 }
