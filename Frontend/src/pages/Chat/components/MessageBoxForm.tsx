@@ -46,27 +46,6 @@ function MessageBoxForm({
       onFormSubmit(data, selectedModel);
    };
 
-   const ModelListItem = ({ model }: { model: Model }) => {
-      return (
-         <ListItem sx={{ padding: 0 }}>
-            <ListItemButton
-               disabled={model.label === 'Coming Soon'}
-               selected={model.model === selectedModel}
-               onClick={() => {
-                  setModel(model.model);
-                  setAnchorEl(null);
-                  clearMessages();
-               }}
-            >
-               <ListItemText>
-                  {model.name} - {model.description}
-               </ListItemText>
-            </ListItemButton>
-            {model.label && <Chip color={'warning'} label={model.label} sx={{ mx: 2 }} />}
-         </ListItem>
-      );
-   };
-
    return (
       <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
          <Box display="flex" gap={1}>
@@ -114,7 +93,16 @@ function MessageBoxForm({
                            >
                               <List>
                                  {models.map((model, i) => (
-                                    <ModelListItem model={model} key={i} />
+                                    <ModelListItem
+                                       model={model}
+                                       key={i}
+                                       selectedModel={selectedModel}
+                                       handelModelChange={(model) => {
+                                          setModel(model);
+                                          setAnchorEl(null);
+                                          clearMessages();
+                                       }}
+                                    />
                                  ))}
                               </List>
                            </Popover>
@@ -133,6 +121,33 @@ function MessageBoxForm({
             </IconButton>
          </Box>
       </Box>
+   );
+}
+
+function ModelListItem({
+   model,
+   selectedModel,
+   handelModelChange,
+}: {
+   model: Model;
+   selectedModel: string;
+   handelModelChange: (mode: string) => void;
+}) {
+   return (
+      <ListItem sx={{ padding: 0 }}>
+         <ListItemButton
+            disabled={model.label === 'Coming Soon'}
+            selected={model.model === selectedModel}
+            onClick={() => {
+               handelModelChange(model.model);
+            }}
+         >
+            <ListItemText>
+               {model.name} - {model.description}
+            </ListItemText>
+         </ListItemButton>
+         {model.label && <Chip color={'warning'} label={model.label} sx={{ mx: 2 }} />}
+      </ListItem>
    );
 }
 
