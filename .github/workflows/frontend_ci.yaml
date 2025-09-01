@@ -5,9 +5,12 @@ env:
 
 on:
   push:
+    paths:
+      - 'Frontend/**'  #Only trigger when files here change
+      - '.github/workflows/frontend_ci.yaml'
     branches:
       - main
-  workflow_dispatch:
+    workflow_dispatch:
 
 jobs:
   push-api-image:
