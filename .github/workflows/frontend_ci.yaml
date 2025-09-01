@@ -1,0 +1,66 @@
+name: Build & Deploy
+
+env:
+  IMAGEURL: 'ghcr.io/alphametic-services-and-technologies/searchvault-frontend:latest'
+
+on:
+  push:
+    paths:
+      - 'Frontend/**'  #Only trigger when files here change
+      - '.github/workflows/frontend_ci.yaml'
+    branches:
+      - main
+    workflow_dispatch:
+
+jobs:
+  push-api-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PrepareReg Names
+        run: |
+          echo IMAGE_REPOSITORY=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
+
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: 'Build Inventory Image'
+        env:
+          GHCR: ghcr.io
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $GHCR/${{ env.IMAGE_REPOSITORY }}:$IMAGE_TAG -t $GHCR/${{ env.IMAGE_REPOSITORY }}:latest .
+          docker push -a $GHCR/${{ env.IMAGE_REPOSITORY }}
+
+  deploy-to-k8s:
+    needs: push-api-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Set the Kubernetes context
+        uses: azure/k8s-set-context@v3
+        with:
+          method: service-account
+          k8s-url: https://rancher.cattle-system.65.109.81.99.srv0.alsayegh.tech
+          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
+
+      - name: Deploy to the k8s cluster
+        uses: azure/k8s-deploy@v4.9
+        with:
+          namespace: staging
+          skip-tls-verify: true
+          manifests: |
+            Frontend/k8s/deployment.yaml
+            Frontend/k8s/service.yaml
+            Frontend/k8s/staging/ingress.yaml
+            Frontend/k8s/nginxconfigs.yaml
+          images: |
+            ${{env.IMAGEURL}}:${{ github.sha }}

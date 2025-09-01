@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   creationTimestamp: null
+   labels:
+      app: searchvault-frontend
+   name: searchvault-frontend
+spec:
+   replicas: 1
+   selector:
+      matchLabels:
+         app: searchvault-frontend
+   strategy: {}
+   template:
+      metadata:
+         creationTimestamp: null
+         labels:
+            app: searchvault-frontend
+      spec:
+         containers:
+            - image: ghcr.io/alphametic-services-and-technologies/searchvault-frontend:latest
+              imagePullPolicy: Always
+              name: searchvault-frontend
+              ports:
+                 - containerPort: 80
+              volumeMounts:
+                 - name: nginx-conf
+                   mountPath: /etc/nginx/nginx.conf
+                   subPath: nginx.conf
+         volumes:
+            - name: nginx-conf
+              configMap:
+                 name: nginx-conf
+         imagePullSecrets:
+            - name: dockerconfigjson-github-com
