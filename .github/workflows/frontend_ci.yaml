@@ -1,8 +1,7 @@
 name: Deploy SearchVault Frontend to k8s
 
 env:
-  IMAGEURL: 'ghcr.io/alphametic-services-and-technologies/searchvault-frontend:latest'
-
+  IMAGEURL: ghcr.io/alphametic-services-and-technologies/searchvault-frontend
 on:
   push:
     paths:
@@ -15,11 +14,7 @@ on:
 jobs:
   push-api-image:
     runs-on: ubuntu-latest
-    steps:
-      - name: PrepareReg Names
-        run: |
-          echo IMAGE_REPOSITORY=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
-
+    steps:    
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@main
 
@@ -30,7 +25,7 @@ jobs:
           username: ${{github.actor}}
           password: ${{secrets.GITHUB_TOKEN}}
 
-      - name: 'Build Inventory Image'
+      - name: 'Build and push Docker image'
         env:
           GHCR: ghcr.io
           IMAGE_TAG: ${{ github.sha }}
@@ -38,14 +33,13 @@ jobs:
           docker build --no-cache -t ${{env.IMAGE_NAME}}:latest -t ${{env.IMAGE_NAME}}:${{ github.sha }} -f Frontend/Dockerfile Frontend/
           docker push ${{env.IMAGE_NAME}}:latest
           docker push ${{env.IMAGE_NAME}}:${{ github.sha }}
-
   deploy-to-k8s:
     needs: push-api-image
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source code
+      - name: Checkout Repo
         uses: actions/checkout@v3
-
+    
       - name: Set the Kubernetes context
         uses: azure/k8s-set-context@v3
         with:
@@ -59,8 +53,8 @@ jobs:
           namespace: staging
           skip-tls-verify: true
           manifests: |
+            Frontend/k8s/staging/ingress.yaml
             Frontend/k8s/deployment.yaml
             Frontend/k8s/service.yaml
-            Frontend/k8s/staging/ingress.yaml
           images: |
-            ${{env.IMAGEURL}}:${{ github.sha }}
+                ${{env.IMAGE_NAME}}:${{ github.sha }}
