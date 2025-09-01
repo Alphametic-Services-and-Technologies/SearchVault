@@ -12,7 +12,7 @@ QDRANT_PORT = int(os.getenv("QDRANT_PORT", 6333))
 
 client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
 
-VECTOR_SIZE = 1024  # mxbai-embed-large-v1
+VECTOR_SIZE = 768  # For BGE-base
 
 def ensure_collection(tenant_id: str):
     collection_name = f"tenant_{tenant_id}"
