@@ -4,18 +4,17 @@ export const models: Model[] = [
    {
       name: 'OpenAI',
       description: 'This will expose your data online to OpenAI',
-      model: 'openai',
+      model: 'gpt-3.5-turbo',
    },
    {
       name: 'Llama3.2',
       description: 'This LLM is hosted locally and your data stays private',
-      model: 'local',
+      model: 'llama3.2',
    },
    {
       name: 'Mistral',
       description: 'This LLM is hosted locally and your data stays private',
-      label: 'Coming Soon',
-      model: '',
+      model: 'mistral',
    },
    {
       name: 'Gemma',

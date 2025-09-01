@@ -12,8 +12,13 @@ const getRequestHeaders = (token: string) => ({
    Authorization: `Bearer ${token}`,
 });
 
-const getRequestBody = (input: string, tenantId: string, llmProvider: string) => {
-   return JSON.stringify({ question: input, tenantId, llmProvider });
+const getRequestBody = (
+   input: string,
+   tenantId: string,
+   llmProvider: string,
+   modelName: string
+) => {
+   return JSON.stringify({ question: input, tenantId, llmProvider, modelName });
 };
 
 interface ChatMessage {
@@ -35,7 +40,7 @@ const useStreamChatResponse = (
    const assistantMessageRef = useRef<string>('');
    const controllerRef = useRef<AbortController | null>(null);
 
-   const sendMessage = async (message: string, model: string) => {
+   const sendMessage = async (message: string, model: string, modelName: string) => {
       const sanitizedMessage = sanitizeMessage(message);
 
       const userMessage: ChatMessage = { role: 'user', content: sanitizedMessage };
@@ -62,7 +67,7 @@ const useStreamChatResponse = (
          const response = await fetch(`${API_URL}/chat`, {
             method: 'POST',
             headers: getRequestHeaders(loggedInUser.token),
-            body: getRequestBody(sanitizedMessage, loggedInUser.tenantId, model),
+            body: getRequestBody(sanitizedMessage, loggedInUser.tenantId, model, modelName),
             signal: controller.signal,
          });
 

@@ -110,8 +110,8 @@ function Chat() {
             </Paper>
 
             <MessageBoxForm
-               onFormSubmit={({ message }, model) => {
-                  sendMessage(message, model);
+               onFormSubmit={({ message }, model, modelName) => {
+                  sendMessage(message, model, modelName);
                }}
                disableSubmit={isLoading || isStreaming}
                clearMessages={() => clearMessages()}
