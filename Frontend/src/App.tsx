@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SidebarLayout from './components/SidebarLayout/SidebarLayout';
 import Home from './pages/Home/Home';
 import Chat from './pages/Chat/Chat';
+import Docs from './pages/Docs/Docs';
 import Login from './pages/Login/login';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import NoAuthRoute from './components/NoAuthRoute/NoAuthRoute';
@@ -31,6 +32,7 @@ function App() {
                }>
                   <Route index element={<Home />} />
                   <Route path="chat" element={<Chat />} />
+                  <Route path="docs" element={<Docs />} />
                </Route>
             </Routes>
          </Router>
