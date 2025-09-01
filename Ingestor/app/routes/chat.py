@@ -35,7 +35,7 @@ async def chat(request: ChatRequest):
     logging.info(f"Tenant ID: {tenant_id} - Question: {question}")
 
     # Step 1: Embed the question
-    question_vector = embed([question], "query")[0]["vector"]
+    question_vector = embed([question])[0]["vector"]
 
     logging.info("# Step 1: Embed the question - done")
     logging.info(f"length: {len(question_vector)}")
@@ -45,7 +45,7 @@ async def chat(request: ChatRequest):
     top_chunks = search_similar_chunks(
         tenant=tenant_id,
         query_vector=question_vector,
-        top_k=4
+        top_k=8
     )
 
     logging.info("# Step 2: Query Qdrant for relevant chunks - done")
