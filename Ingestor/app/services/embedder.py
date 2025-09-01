@@ -1,15 +1,21 @@
-from transformers import AutoTokenizer, AutoModel
-import torch
 import logging
+from typing import List, Literal
+from sentence_transformers import SentenceTransformer
 
 logging.basicConfig(level=logging.INFO)
 
-MODEL_NAME = "BAAI/bge-base-en"
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-model = AutoModel.from_pretrained(MODEL_NAME)
-model.eval() # This tells PyTorch: “I’m not training — just give me stable, clean outputs.”
+MODEL_ID = "mixedbread-ai/mxbai-embed-large-v1"
+_model = SentenceTransformer(MODEL_ID)
 
-@torch.no_grad() # torch.no_grad() is a PyTorch decorator that disables gradient tracking. Normally, PyTorch tracks all operations to compute gradients for training. But during inference (prediction), you don’t need gradients
+def _apply_instruction(texts: List[str], kind: Literal["document","query"]) -> List[str]:
+    """
+    Add instruction prefixes recommended for instruction-tuned embedding models.
+    """
+    if kind == "document":
+        prefix = "Represent the document for retrieval: "
+    else:  # "query"
+        prefix = "Represent this sentence for searching relevant passages: "
+    return [prefix + t for t in texts]
 
 def embed(chunks: list[str]) -> list[dict]:
     """

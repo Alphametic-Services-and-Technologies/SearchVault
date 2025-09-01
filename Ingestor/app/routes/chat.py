@@ -11,6 +11,7 @@ import os
 class ChatRequest(BaseModel):
     question: str
     tenantId: str
+    llmProvider: str
 
 logging.basicConfig(level=logging.INFO)
 
@@ -25,6 +26,9 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 async def chat(request: ChatRequest):
     question = request.question
     tenant_id = request.tenantId
+
+    # Prefer FE setting; fall back to config
+    llm_provider = request.llmProvider or LLM_PROVIDER
 
     logging.info(f"Tenant ID: {tenant_id} - Question: {question}")
 
@@ -57,30 +61,17 @@ async def chat(request: ChatRequest):
     prompt = [
         {"role": "system",
          "content": (
-             "You are a helpful and knowledgeable assistant specialized in German construction law. "
-             "Use the provided context to answer questions accurately. "
-             "context will be passed as \"Context:\""
-             "user question will be passed as \"Question:\""
-             "To answer the question:"
-             "1. Thoroughly analyze the context, identifying key information relevant to the question."
-             "2. Organize your thoughts and plan your response to ensure a logical flow of information."
-             "3. Formulate a detailed answer that directly addresses the question, using only the information provided in the context."
-             "4. Ensure your answer is comprehensive, covering all relevant aspects found in the context."
-             "5. If the context doesn't contain sufficient information to fully answer the question, state this clearly in your response. "
-             "Important: Base your entire response solely on the information provided in the context. Do not include any external knowledge or assumptions not present in the given text."
-             "Format your response as follows:"
-             "1. Use clear, concise language."
-             "2. Organize your answer into paragraphs for readability."
-             "3. Use bullet points or numbered lists where appropriate to break down complex information."
-             "4. If relevant, include any headings or subheadings to structure your response."
-             "5. Ensure proper grammar, punctuation, and spelling throughout your answer."
+             "context will be passed as \"Context:\". "
+             "User question will be passed as \"Question:\". "
+             "Answer the question using only the information from the context. "
+             "If you cannot answer this question based on the context, say \"I cannot answer this question based on the available information.\""
          )},
         {"role": "user", "content": f"Context:\n{context_text}\n\nQuestion: {question}"}
     ]
 
     logging.info("# Step 4: Build prompt - done")
 
-    if LLM_PROVIDER == "openai":
+    if llm_provider == "openai":
         logging.info("Open ai is used for chat")
         return StreamingResponse(stream_openai(prompt), media_type="text/event-stream")
     else:
