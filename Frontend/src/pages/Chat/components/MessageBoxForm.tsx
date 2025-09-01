@@ -26,7 +26,7 @@ interface FormValues {
 }
 
 interface MessageBoxFormProps {
-   onFormSubmit: (message: FormValues, model: string) => void;
+   onFormSubmit: (message: FormValues, model: string, modelName: string) => void;
    disableSubmit?: boolean;
    clearMessages: () => void;
 }
@@ -39,11 +39,11 @@ function MessageBoxForm({
 
    const message = watch('message');
    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-   const [selectedModel, setModel] = useLocalStorage<string>('SV-Model', 'local');
+   const [selectedModel, setModel] = useLocalStorage<string>('SV-Model', 'llama3.2');
 
    const onSubmit: SubmitHandler<FormValues> = (data) => {
       reset();
-      onFormSubmit(data, selectedModel);
+      onFormSubmit(data, selectedModel === 'gpt-3.5-turbo' ? 'openai' : 'local', selectedModel);
    };
 
    return (
@@ -72,10 +72,7 @@ function MessageBoxForm({
                               onClick={(e) => setAnchorEl(e.currentTarget)}
                               aria-describedby="model-selector"
                            >
-                              <Chip
-                                 color="primary"
-                                 label={models.find((model) => selectedModel === model.model)?.name}
-                              />
+                              <Chip color="primary" label={selectedModel} />
                            </IconButton>
                            <Popover
                               id="model-selector"
