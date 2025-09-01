@@ -1,26 +1,49 @@
+import { useState } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import useLocalStorage from '../../../hooks/useLocalStorage/useLocalStorage';
+
+// MUI
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import Chip from '@mui/material/Chip';
+import Popover from '@mui/material/Popover';
+import ListItem from '@mui/material/ListItem';
 import TextField from '@mui/material/TextField';
 import SendIcon from '@mui/icons-material/Send';
+import IconButton from '@mui/material/IconButton';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemButton from '@mui/material/ListItemButton';
+import InputAdornment from '@mui/material/InputAdornment';
 
-import { useForm, type SubmitHandler } from 'react-hook-form';
+// Types
+import type { Model } from '../../../types/model.type';
+
+// List of Models
+import { models } from '../../../consts/modelList';
 
 interface FormValues {
    message: string;
 }
 
 interface MessageBoxFormProps {
-   onFormSubmit: (message: FormValues) => void;
+   onFormSubmit: (message: FormValues, model: string, modelName: string) => void;
    disableSubmit?: boolean;
+   clearMessages: () => void;
 }
-function MessageBoxForm({ onFormSubmit, disableSubmit = false }: MessageBoxFormProps) {
+function MessageBoxForm({
+   onFormSubmit,
+   disableSubmit = false,
+   clearMessages,
+}: MessageBoxFormProps) {
    const { handleSubmit, register, reset, watch } = useForm<FormValues>();
 
    const message = watch('message');
+   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+   const [selectedModel, setModel] = useLocalStorage<string>('SV-Model', 'llama3.2');
 
    const onSubmit: SubmitHandler<FormValues> = (data) => {
       reset();
-      onFormSubmit(data);
+      onFormSubmit(data, selectedModel === 'gpt-3.5-turbo' ? 'openai' : 'local', selectedModel);
    };
 
    return (
@@ -41,6 +64,49 @@ function MessageBoxForm({ onFormSubmit, disableSubmit = false }: MessageBoxFormP
                   }
                }}
                {...register('message')}
+               slotProps={{
+                  input: {
+                     endAdornment: (
+                        <InputAdornment position="end">
+                           <IconButton
+                              onClick={(e) => setAnchorEl(e.currentTarget)}
+                              aria-describedby="model-selector"
+                           >
+                              <Chip color="primary" label={selectedModel} />
+                           </IconButton>
+                           <Popover
+                              id="model-selector"
+                              open={Boolean(anchorEl)}
+                              anchorEl={anchorEl}
+                              onClose={() => setAnchorEl(null)}
+                              anchorOrigin={{
+                                 vertical: 'top',
+                                 horizontal: 'left',
+                              }}
+                              transformOrigin={{
+                                 vertical: 'bottom',
+                                 horizontal: 'right',
+                              }}
+                           >
+                              <List>
+                                 {models.map((model, i) => (
+                                    <ModelListItem
+                                       model={model}
+                                       key={i}
+                                       selectedModel={selectedModel}
+                                       handelModelChange={(model) => {
+                                          setModel(model);
+                                          setAnchorEl(null);
+                                          clearMessages();
+                                       }}
+                                    />
+                                 ))}
+                              </List>
+                           </Popover>
+                        </InputAdornment>
+                     ),
+                  },
+               }}
             />
 
             <IconButton
@@ -52,6 +118,33 @@ function MessageBoxForm({ onFormSubmit, disableSubmit = false }: MessageBoxFormP
             </IconButton>
          </Box>
       </Box>
+   );
+}
+
+function ModelListItem({
+   model,
+   selectedModel,
+   handelModelChange,
+}: {
+   model: Model;
+   selectedModel: string;
+   handelModelChange: (mode: string) => void;
+}) {
+   return (
+      <ListItem sx={{ padding: 0 }}>
+         <ListItemButton
+            disabled={model.label === 'Coming Soon'}
+            selected={model.model === selectedModel}
+            onClick={() => {
+               handelModelChange(model.model);
+            }}
+         >
+            <ListItemText>
+               {model.name} - {model.description}
+            </ListItemText>
+         </ListItemButton>
+         {model.label && <Chip color={'warning'} label={model.label} sx={{ mx: 2 }} />}
+      </ListItem>
    );
 }
 

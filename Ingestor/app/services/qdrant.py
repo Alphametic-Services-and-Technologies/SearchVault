@@ -1,9 +1,9 @@
-from qdrant_client import QdrantClient
-from qdrant_client.models import PointStruct, VectorParams, Distance, Filter, FieldCondition, MatchValue, SearchRequest, FilterSelector
-import uuid
-import os
 import logging
-import json
+import os
+import uuid
+
+from qdrant_client import QdrantClient
+from qdrant_client.models import PointStruct, VectorParams, Distance, Filter, FieldCondition, MatchValue, FilterSelector
 
 logging.basicConfig(level=logging.INFO)
 
@@ -12,15 +12,13 @@ QDRANT_PORT = int(os.getenv("QDRANT_PORT", 6333))
 
 client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
 
-VECTOR_SIZE = 768  # For BGE-base
-DISTANCE_METRIC = Distance.COSINE
-
+VECTOR_SIZE = 1024  # mxbai-embed-large-v1
 
 def ensure_collection(tenant_id: str):
     collection_name = f"tenant_{tenant_id}"
     if not client.collection_exists(collection_name):
         client.create_collection(collection_name=collection_name,
-                                 vectors_config=VectorParams(size=VECTOR_SIZE, distance=DISTANCE_METRIC))
+                                 vectors_config=VectorParams(size=VECTOR_SIZE, distance=Distance.COSINE))
     return collection_name
 
 

@@ -19,6 +19,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
+import DescriptionIcon from '@mui/icons-material/Description';
 import UserMenu from '../UserMenu/UserMenu';
 
 const drawerWidth = 240;
@@ -28,6 +29,7 @@ const PROJECT_NAME = 'SearchVault';
 const navItems = [
    { text: 'Home', icon: <HomeIcon />, path: '/app' },
    { text: 'Chat', icon: <InfoIcon />, path: '/app/chat' },
+   { text: 'Documents', icon: <DescriptionIcon />, path: '/app/docs' }
 ];
 
 function SidebarLayout() {

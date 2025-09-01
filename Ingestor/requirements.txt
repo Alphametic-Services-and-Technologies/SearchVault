@@ -1,3 +1,4 @@
+langchain
 fastapi
 uvicorn
 PyMuPDF
@@ -8,3 +9,4 @@ qdrant-client
 python-multipart
 numpy<2
 transformers
+sentence-transformers

@@ -16,9 +16,8 @@ function Chat() {
    // const [token, setToken] = useState('');
    // const [tenantId, setTenantId] = useState('');
 
-
-   const { messages, sendMessage, isStreaming, isLoading } = useStreamChatResponse(
-      () => {},
+   const { messages, sendMessage, clearMessages, isStreaming, isLoading } = useStreamChatResponse(
+      () => {}
       // token,
       // tenantId
    );
@@ -111,10 +110,11 @@ function Chat() {
             </Paper>
 
             <MessageBoxForm
-               onFormSubmit={({ message }) => {
-                  sendMessage(message);
+               onFormSubmit={({ message }, model, modelName) => {
+                  sendMessage(message, model, modelName);
                }}
                disableSubmit={isLoading || isStreaming}
+               clearMessages={() => clearMessages()}
             />
          </Box>
       </>
