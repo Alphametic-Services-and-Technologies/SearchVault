@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 import httpx
 from services.embedder import embed
@@ -11,6 +11,8 @@ import os
 class ChatRequest(BaseModel):
     question: str
     tenantId: str
+    llmProvider: str
+    modelName: str
 
 logging.basicConfig(level=logging.INFO)
 
@@ -25,11 +27,15 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 async def chat(request: ChatRequest):
     question = request.question
     tenant_id = request.tenantId
+    model_name = request.modelName
+
+    # Prefer FE setting; fall back to config
+    llm_provider = request.llmProvider or LLM_PROVIDER
 
     logging.info(f"Tenant ID: {tenant_id} - Question: {question}")
 
     # Step 1: Embed the question
-    question_vector = embed([question])[0]["vector"]
+    question_vector = embed([question], "query")[0]["vector"]
 
     logging.info("# Step 1: Embed the question - done")
     logging.info(f"length: {len(question_vector)}")
@@ -57,39 +63,29 @@ async def chat(request: ChatRequest):
     prompt = [
         {"role": "system",
          "content": (
-             "You are a helpful and knowledgeable assistant specialized in German construction law. "
-             "Use the provided context to answer questions accurately. "
-             "context will be passed as \"Context:\""
-             "user question will be passed as \"Question:\""
-             "To answer the question:"
-             "1. Thoroughly analyze the context, identifying key information relevant to the question."
-             "2. Organize your thoughts and plan your response to ensure a logical flow of information."
-             "3. Formulate a detailed answer that directly addresses the question, using only the information provided in the context."
-             "4. Ensure your answer is comprehensive, covering all relevant aspects found in the context."
-             "5. If the context doesn't contain sufficient information to fully answer the question, state this clearly in your response. "
-             "Important: Base your entire response solely on the information provided in the context. Do not include any external knowledge or assumptions not present in the given text."
-             "Format your response as follows:"
-             "1. Use clear, concise language."
-             "2. Organize your answer into paragraphs for readability."
-             "3. Use bullet points or numbered lists where appropriate to break down complex information."
-             "4. If relevant, include any headings or subheadings to structure your response."
-             "5. Ensure proper grammar, punctuation, and spelling throughout your answer."
+             "Answer the following question based on the provided context. Follow these rules: "
+             "1. If the question is about vacation days, ALWAYS mention the company policy of 25 paid vacation days per year "
+             "2. For questions about specific employees, clearly state: - Their position and department - Number of vacation days taken - Number of vacation days remaining (25 minus days taken) "
+             "3. If looking at historical data, mention when we don't have the full year's context"
+             "If you cannot answer this question based on the context, say \"I cannot answer this question based on the available information.\""
          )},
-        {"role": "user", "content": f"Context:\n{context_text}\n\nQuestion: {question}"}
+        {"role": "user", "content": f"Context:\n{context_text}\n\nHere's the original user prompt, answer with help of the retrieved passages:: {question}"}
     ]
 
     logging.info("# Step 4: Build prompt - done")
 
-    if LLM_PROVIDER == "openai":
-        logging.info("Open ai is used for chat")
+    if llm_provider == "openai":
+        logging.info(f"Open ai is used for chat with model: {model_name}")
         return StreamingResponse(stream_openai(prompt), media_type="text/event-stream")
     else:
-        logging.info("local LLM is used for chat")
-        return StreamingResponse(stream_local_llm(prompt), media_type="text/event-stream")
+        logging.info(f"local LLM is used for chat with model: {model_name}")
+        return StreamingResponse(stream_local_llm(prompt, model_name), media_type="text/event-stream")
 
-async def stream_local_llm(prompt):
+async def stream_local_llm(prompt, model_name):
     payload = {
-        "model": "llama3.2",
+        # "model": "llama3.2",
+        # "model": "mistral",
+        "model": model_name,
         "stream": True,
         "messages": prompt
     }
