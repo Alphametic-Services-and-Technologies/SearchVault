@@ -1,7 +1,7 @@
 name: Deploy SearchVault Frontend to k8s
 
 env:
-  IMAGEURL: ghcr.io/alphametic-services-and-technologies/searchvault-frontend
+  IMAGE_NAME: ghcr.io/alphametic-services-and-technologies/searchvault-frontend
 on:
   push:
     paths:
