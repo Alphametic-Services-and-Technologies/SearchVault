@@ -29,7 +29,7 @@ const PROJECT_NAME = 'SearchVault';
 const navItems = [
    { text: 'Home', icon: <HomeIcon />, path: '/app' },
    { text: 'Chat', icon: <InfoIcon />, path: '/app/chat' },
-   { text: 'Docs', icon: <DescriptionIcon />, path: '/app/docs' }
+   { text: 'Documents', icon: <DescriptionIcon />, path: '/app/docs' }
 ];
 
 function SidebarLayout() {
