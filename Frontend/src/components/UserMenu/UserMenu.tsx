@@ -1,18 +1,9 @@
 import React from 'react';
-import {
-   Avatar,
-   Box,
-   IconButton,
-   Menu,
-   MenuItem,
-   Typography,
-   ListItemIcon,
-   useTheme,
-} from '@mui/material';
+import { Avatar, Box, IconButton, Menu, MenuItem, ListItemIcon, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
-import { useAppDispatch, useAppSelector } from '../../hooks/redux/redux';
+import { useAppDispatch } from '../../hooks/redux/redux';
 import { logout } from '../../slices/auth.slice';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
@@ -25,7 +16,6 @@ function UserMenu({ className }: UserMenuProps) {
    const theme = useTheme();
    const navigate = useNavigate();
    const dispatch = useAppDispatch();
-   const { tenantId } = useAppSelector((state) => state.auth);
 
    const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
       setAnchorEl(event.currentTarget);
