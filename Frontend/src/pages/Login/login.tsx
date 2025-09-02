@@ -1,14 +1,14 @@
-import { Box, Paper, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import LoginForm from "./components/LoginForm";
-
+import { Box, Paper, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import LoginForm from './components/LoginForm';
+import Logo from '../../assets/logo1.png';
 
 function Login() {
-   const navigate = useNavigate()
+   const navigate = useNavigate();
 
    const handleLoginSuccess = () => {
       navigate('/app');
-   }  
+   };
 
    return (
       <Box
@@ -33,7 +33,7 @@ function Login() {
                maxWidth: 400,
                padding: { xs: 2, sm: 4 },
                borderRadius: 3,
-               margin: 2
+               margin: 2,
             }}
          >
             <Box textAlign="center" mb={3}>
@@ -54,12 +54,12 @@ function Login() {
                >
                   <Box
                      component="img"
-                     src="/src/assets/logo1.png"
+                     src={Logo}
                      alt="SearchVault Logo"
                      sx={{
                         height: 90,
                         width: 90,
-                        objectFit: 'contain'
+                        objectFit: 'contain',
                      }}
                   />
                </Box>
@@ -75,7 +75,7 @@ function Login() {
             <LoginForm onSuccess={handleLoginSuccess} />
          </Paper>
       </Box>
-   )
+   );
 }
 
 export default Login;

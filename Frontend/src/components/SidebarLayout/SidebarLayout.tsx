@@ -22,6 +22,8 @@ import InfoIcon from '@mui/icons-material/Info';
 import DescriptionIcon from '@mui/icons-material/Description';
 import UserMenu from '../UserMenu/UserMenu';
 
+import Logo from '../../assets/logo1.png';
+
 const drawerWidth = 240;
 
 const PROJECT_NAME = 'SearchVault';
@@ -29,7 +31,7 @@ const PROJECT_NAME = 'SearchVault';
 const navItems = [
    { text: 'Home', icon: <HomeIcon />, path: '/app' },
    { text: 'Chat', icon: <InfoIcon />, path: '/app/chat' },
-   { text: 'Documents', icon: <DescriptionIcon />, path: '/app/docs' }
+   { text: 'Documents', icon: <DescriptionIcon />, path: '/app/docs' },
 ];
 
 function SidebarLayout() {
@@ -81,7 +83,7 @@ function SidebarLayout() {
             position="fixed"
             sx={{
                zIndex: theme.zIndex.drawer + 1,
-               backgroundColor: 'primary.main'
+               backgroundColor: 'primary.main',
             }}
          >
             <Toolbar>
@@ -107,17 +109,17 @@ function SidebarLayout() {
                         alignItems: 'center',
                         justifyContent: 'center',
                         mr: 1.5,
-                        boxShadow: 1
+                        boxShadow: 1,
                      }}
                   >
                      <Box
                         component="img"
-                        src="/src/assets/logo1.png"
+                        src={Logo}
                         alt="SearchVault Logo"
                         sx={{
                            height: 38,
                            width: 38,
-                           objectFit: 'contain'
+                           objectFit: 'contain',
                         }}
                      />
                   </Box>
